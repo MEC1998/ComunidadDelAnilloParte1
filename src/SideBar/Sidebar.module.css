@@ -1,0 +1,71 @@
+.sidebar {
+  width: 430px; 
+  background-color: var(--primary-color);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  color: var(--secondary-color);
+}
+
+.title2 {
+  background-color: var(--primary-color);
+  color: var(--secondary-color);
+  text-align: center;
+  padding: 1rem 0;
+}
+
+.addButton {
+  align-self: center;
+  padding: 0.5rem 1rem;
+  background-color: var(--secondary-color);
+  color: var(--primary-color);
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.addButton:hover {
+  background-color: var(--background-color);
+}
+
+.sidebarItems {
+  list-style: none;
+  padding: 0;
+  margin-top: 20px;
+}
+
+.sidebarItem {
+  padding: 1rem;
+  border-bottom: 2px solid var(--background-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.sidebarItem:hover {
+  background-color: var(--secondary-color);
+  color: var(--primary-color);
+}
+
+.sidebarItemText {
+  font-weight: bold;
+}
+
+.sidebarItemTextDesc {
+  display: block;
+  font-size: 0.8em;
+  color: var(--secondary-color);
+}
+
+.sidebarButton {
+  padding: 0.5rem;
+  cursor: pointer;
+  border-radius: 50%;
+}
+
+.sidebarButton:hover {
+  background-color: var(--primary-color);
+  color: var(--secondary-color);
+}
