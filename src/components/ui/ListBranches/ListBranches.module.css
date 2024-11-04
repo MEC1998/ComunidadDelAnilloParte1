@@ -11,25 +11,34 @@
 
 /* card */
 .card {
-  max-height: 30rem;
+  height: 20rem;
   width: calc(33% - 1rem);
   background-color: var(--secondary-color);
   padding: 1rem;
   box-sizing: border-box;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .cardTitle {
   font-size: 1.5rem;
   font-weight: 600;
-  line-height: 50%;
+  text-align: center;
+  line-height: 1.2;
+  white-space: nowrap; 
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%; 
+  
 }
 
 .cardImg {
-  max-height: 13rem;
+  height: 10rem;
+  width: 100%;
+  object-fit: cover;
 }
 
 .cardButtons {
@@ -45,6 +54,8 @@
   padding: 0.3rem;
   border-radius: 50%;
   background-color: var(--secondary-color);
+  cursor: pointer;
+
 }
 
 .cardButton:hover {

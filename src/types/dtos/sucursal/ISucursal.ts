@@ -17,4 +17,11 @@ export interface ISucursal {
   eliminado: boolean;
   horarioCierre: string;
   logo?: string;
+  paisId: string;
+  provincia: string;
+  localidad: string;
+  numero: string;
+  cp: string;
+  piso: string;
+  nroDpto: string;
 }

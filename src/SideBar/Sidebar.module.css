@@ -23,7 +23,7 @@
   height: 30px;
   background-color: var(--secondary-color);
   /* background-color: #3A6D8C; */
-  color: #ffffff;
+  color: var(--primary-color);
   border-radius: 0.4rem;
   border: none;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4); 
@@ -32,6 +32,7 @@
 
 .addButton:hover {
   background-color: #3A6D8C;
+  color: var(--secondary-color);
 }
 
 .sidebarItems {
@@ -58,6 +59,24 @@
 .sidebarItemText {
   font-weight: bold;
 }
-
-
-
+.sidebarButtons {
+  display: flex;
+  gap: .5rem;
+}
+.sidebarItemButton {
+  display: flex;
+  border: none;
+  padding: 0.3rem;
+  height: 2rem;
+  width: 2rem;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  background-color: var(--secondary-color);
+  cursor: pointer;
+  border: 2px solid var(--primary-color);
+  &:hover {
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
+  }
+}

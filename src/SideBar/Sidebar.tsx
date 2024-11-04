@@ -4,48 +4,96 @@ import { useState } from "react";
 import styles from "./Sidebar.module.css";
 import { CompanyForm } from "../components/ui/ModalCompanyForm/CompanyForm";
 import { useSelectedCompany } from "../context/SelectedCompanyContext";
-
-interface Company {
-  name: string;
-  reason: string;
-  cuit: string;
-  image: File | null;
-}
+import { IEmpresa } from "../types/dtos/empresa/IEmpresa";
 
 export const Sidebar = () => {
 
   // ESTADOS DE COMPONENTES
-  const [companies, setCompanies] = useState<Company[]>([]);
+  const [companies, setCompanies] = useState<IEmpresa[]>(() => {
+    try {
+      const savedCompanies = localStorage.getItem('companies');
+      return savedCompanies ? JSON.parse(savedCompanies) : [];
+    } catch (error) {
+      console.error('Error loading companies from localStorage:', error);
+      return [];
+    }
+  });
   const [showForm, setShowForm] = useState(false);
+  const [editingCompany, setEditingCompany] = useState<IEmpresa | null>(null);
 
   //tomamos el nombre de la empresa
   const { setSelectedCompany } = useSelectedCompany();
 
   //FUNCIONES
-  const handleAddCompany = (company: Company) => {
-    setCompanies([...companies, company]);
-    setShowForm(false);
+  const handleAddCompany = (company: IEmpresa) => {
+    try {
+      const updatedCompanies = [...companies, company];
+      setCompanies(updatedCompanies);
+      localStorage.setItem('companies', JSON.stringify(updatedCompanies));
+      setShowForm(false);
+      console.log('Companies saved:', updatedCompanies);
+    } catch (error) {
+      console.error('Error saving companies to localStorage:', error);
+    }
+  };
+
+  const handleEditCompany = (company: IEmpresa) => {
+    setEditingCompany(company);
+    setShowForm(true);
+  };
+
+  const handleUpdateCompany = (updatedCompany: IEmpresa) => {
+    try {
+      const updatedCompanies = companies.map(company => 
+        company.nombre === editingCompany?.nombre ? updatedCompany : company
+      );
+      setCompanies(updatedCompanies);
+      localStorage.setItem('companies', JSON.stringify(updatedCompanies));
+      setShowForm(false);
+      setEditingCompany(null);
+    } catch (error) {
+      console.error('Error updating company:', error);
+    }
   };
 
   return (
     <div className={styles.sidebar}>
       <h2 className={styles.title2}>Empresas</h2>
       <button className={styles.addButton} onClick={() => setShowForm(true)}>Agregar Empresa</button>
-      {showForm && <CompanyForm onAddCompany={handleAddCompany} onClose={() => setShowForm(false)} />}
+      {showForm && (
+        <CompanyForm 
+          onAddCompany={editingCompany ? handleUpdateCompany : handleAddCompany}
+          onClose={() => {
+            setShowForm(false);
+            setEditingCompany(null);
+          }}
+          editingCompany={editingCompany}
+        />
+      )}
       <ul className={styles.sidebarItems}>
         {companies.map((company, index) => (
           <li
             key={index}
             className={styles.sidebarItem}
-            onClick={() => setSelectedCompany(company.name)} // Actualiza el título en branches 
+            onClick={() => setSelectedCompany(company.nombre)}
           >
             <div className={styles.sidebarItemText}>
-              {company.name}
-              <span className={styles.sidebarItemTextDesc}>{company.reason}</span>
+              {company.nombre}
+              <span className={styles.sidebarItemTextDesc}>{company.razonSocial}</span>
             </div>
-            <div>
-              <span className="material-symbols-outlined sidebarButton">info</span>
-              <span className="material-symbols-outlined sidebarButton">edit</span>
+            <div className={styles.sidebarButtons}>
+              <button className={styles.sidebarItemButton}>
+                <span className="material-symbols-outlined sidebarButton">info</span>
+              </button>
+              <button 
+                className={styles.sidebarItemButton}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleEditCompany(company);
+                }}
+              >
+                <span className="material-symbols-outlined sidebarButton">edit</span>
+              </button>
             </div>
           </li>
         ))}

@@ -14,19 +14,18 @@
 .modalContent {
   color: black;
   background-color: #C8D8E9;
-  padding: 50px;
+  padding: 1rem;
   border-radius: 3px;
-  width: 500px;
   text-align: center;
-}
-.modalContent h2 {
-  padding-bottom: 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
 }
 
 .modalContent input {
   width: 100%;
   padding: 8px;
-  margin: 10px 0;
   border: 1px solid black;
   background-color: #C8D8E9;
   color: black;
@@ -35,7 +34,7 @@
 
 .buttons {
   display: flex;
-  justify-content: space-around;
+  justify-content: center;
 }
 
 .buttons button {
@@ -54,4 +53,9 @@
 .buttons button[type="button"] {
   background-color: #f44336;
   color: white;
+}
+.formContent {
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
 }

@@ -6,6 +6,7 @@ import { useSelectedCompany } from "../../context/SelectedCompanyContext";
 import BranchModal from "../ui/BranchModal/BranchModal";
 import { useState } from "react";
 import { Branch } from "../../types/Branch";
+import { ISucursal } from "../../types/dtos/sucursal/ISucursal";
 
 
 export const Branches = () => {
@@ -20,15 +21,40 @@ export const Branches = () => {
   const handleCloseModal = () => {
     setModalOpen(false);
   };
-const handleConfirm = (data: Branch) => {
-  console.log("Sucursal agregada:", data);
-  setBranches((prevBranches) => [...prevBranches, data]); // Agrega la nueva sucursal
+const handleConfirm = (data: Partial<ISucursal>) => {
+  const newBranch: Branch = {
+    id: data.id?.toString() || Date.now().toString(),
+    name: data.nombre || '',
+    openingTime: data.horarioApertura || '',
+    closingTime: data.horarioCierre || '',
+    companyName: selectedCompany || '',
+    image: data.logo || null,
+    street: data.domicilio?.calle
+  };
+  
+  setBranches((prevBranches) => [...prevBranches, newBranch]);
   handleCloseModal();
 };
 
 // Estado para las sucursales
   const [branches, setBranches] = useState<Branch[]>([]); 
 
+  const handleUpdateBranch = (branchId: string, data: Partial<ISucursal>) => {
+    setBranches(prevBranches => 
+      prevBranches.map(branch => 
+        branch.id === branchId 
+          ? {
+              ...branch,
+              name: data.nombre || branch.name,
+              openingTime: data.horarioApertura || branch.openingTime,
+              closingTime: data.horarioCierre || branch.closingTime,
+              image: data.logo || branch.image,
+              street: data.domicilio?.calle || branch.street
+            }
+          : branch
+      )
+    );
+  };
 
   return (
     <div className={styles.maincontentContainer}>
@@ -45,7 +71,10 @@ const handleConfirm = (data: Branch) => {
         </div>
       </div>
 
-      <ListBranches branches={branches} /> {/* Pasa las sucursales al componente ListBranches */}
+      <ListBranches 
+        branches={branches} 
+        onUpdateBranch={handleUpdateBranch}
+      /> {/* Pasa las sucursales al componente ListBranches */}
 
       {/* Modal para agregar sucursal */}
       {isModalOpen && (
