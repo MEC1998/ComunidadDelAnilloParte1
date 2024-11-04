@@ -32,12 +32,14 @@
     align-items: center;
     width: 203px;
     height: 30px;
-    background-color: #3A6D8C;
+    background-color: var(--secondary-color);
     color: #ffffff;
     border-radius: 0.4rem;
     border: none;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4); 
-
+    cursor: pointer;
 }
-
+.addButtonBranch:hover {
+    background-color: #3A6D8C;
+  }
 

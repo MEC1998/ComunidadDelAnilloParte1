@@ -1,32 +1,37 @@
 .sidebar {
   width: 430px; 
   background-color: var(--primary-color);
-  padding: 20px;
   display: flex;
   flex-direction: column;
   gap: 10px;
-  color: var(--secondary-color);
+  color:#ffffff
 }
 
 .title2 {
-  background-color: var(--primary-color);
-  color: var(--secondary-color);
   text-align: center;
-  padding: 1rem 0;
+  padding: 1rem;
+  padding-top: 6.5rem;
 }
 
 .addButton {
   align-self: center;
   padding: 0.5rem 1rem;
+  display:flex;
+  justify-content: center;
+  align-items: center;
+  width: 203px;
+  height: 30px;
   background-color: var(--secondary-color);
-  color: var(--primary-color);
+  /* background-color: #3A6D8C; */
+  color: #ffffff;
+  border-radius: 0.4rem;
   border: none;
-  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4); 
   cursor: pointer;
 }
 
 .addButton:hover {
-  background-color: var(--background-color);
+  background-color: #3A6D8C;
 }
 
 .sidebarItems {
@@ -34,13 +39,14 @@
   padding: 0;
   margin-top: 20px;
 }
-
+.sidebarItemTextDesc {
+  display: block;
+  font-size: 0.8em;
+}
 .sidebarItem {
   padding: 1rem;
-  border-bottom: 2px solid var(--background-color);
   display: flex;
   justify-content: space-between;
-  align-items: center;
   transition: background-color 0.3s, color 0.3s;
 }
 
@@ -53,19 +59,5 @@
   font-weight: bold;
 }
 
-.sidebarItemTextDesc {
-  display: block;
-  font-size: 0.8em;
-  color: var(--secondary-color);
-}
 
-.sidebarButton {
-  padding: 0.5rem;
-  cursor: pointer;
-  border-radius: 50%;
-}
 
-.sidebarButton:hover {
-  background-color: var(--primary-color);
-  color: var(--secondary-color);
-}

@@ -26,7 +26,7 @@ export const CompanyForm: React.FC<CompanyFormProps> = ({ onAddCompany, onClose 
   return (
     <div className={styles.modalOverlay}>
       <div className={styles.modalContent}>
-        <h2>Crear Empresa</h2>
+        <h2>CREAR UNA EMPRESA</h2>
         <form onSubmit={handleSubmit}>
           <input
             type="text"
