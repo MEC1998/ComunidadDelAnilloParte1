@@ -1,4 +1,4 @@
-import { DashBoard } from "./DashBoard/DashBoard";
+import { DashBoard } from "../DashBoard/DashBoard";
 
 export const Home = () => {
   return (

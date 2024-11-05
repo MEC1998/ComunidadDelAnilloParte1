@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import styles from "./CompanyForm.module.css";
-import { IEmpresa } from "../../../types/dtos/empresa/IEmpresa";
+import { IEmpresa } from "../../types/dtos/empresa/IEmpresa";
+
 
 interface CompanyFormProps {
   onAddCompany: (company: IEmpresa) => void;

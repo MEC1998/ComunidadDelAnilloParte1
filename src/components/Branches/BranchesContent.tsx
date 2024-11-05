@@ -1,12 +1,10 @@
-// src/components/Branches/BranchesContent.tsx
-
-import { ListBranches } from "../ui/ListBranches/ListBranches";
 import styles from "./BranchesContent.module.css";
 import { useSelectedCompany } from "../../context/SelectedCompanyContext";
-import BranchModal from "../ui/BranchModal/BranchModal";
 import { useState } from "react";
 import { Branch } from "../../types/Branch";
 import { ISucursal } from "../../types/dtos/sucursal/ISucursal";
+import { ListBranches } from "../ListBranches/ListBranches";
+import BranchModal from "../BranchModal/BranchModal";
 
 
 export const Branches = () => {

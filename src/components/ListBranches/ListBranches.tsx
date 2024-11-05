@@ -1,9 +1,8 @@
-// src/ui/ListBranches/ListBranches.tsx
-import { Branch } from "../../../types/Branch";
-import { ISucursal } from "../../../types/dtos/sucursal/ISucursal";
 import styles from "./ListBranches.module.css";
 import BranchModal from "../BranchModal/BranchModal";
 import { useState } from "react";
+import { Branch } from "../../types/Branch";
+import { ISucursal } from "../../types/dtos/sucursal/ISucursal";
 
 interface ListBranchesProps {
   branches: Branch[];

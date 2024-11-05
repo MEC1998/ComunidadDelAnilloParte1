@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { IPais } from "../../../types/IPais";
 import styles from "./BranchModal.module.css";
+import { ISucursal } from "../../types/dtos/sucursal/ISucursal";
+import { IPais } from "../../types/IPais";
 
-import { ISucursal } from "../../../types/dtos/sucursal/ISucursal";
 
 interface BranchModalProps {
     onClose: () => void;

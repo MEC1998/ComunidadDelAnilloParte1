@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import styles from "./Sidebar.module.css";
-import { CompanyForm } from "../components/ui/ModalCompanyForm/CompanyForm";
 import { useSelectedCompany } from "../context/SelectedCompanyContext";
 import { IEmpresa } from "../types/dtos/empresa/IEmpresa";
+import { CompanyForm } from "../components/ModalCompanyForm/CompanyForm";
 
 export const Sidebar = () => {
 

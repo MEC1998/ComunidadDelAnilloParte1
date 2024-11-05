@@ -1,7 +1,7 @@
 
-import { SelectedCompanyProvider } from "../../../context/SelectedCompanyContext";
-import { Sidebar } from "../../../SideBar/Sidebar";
-import { Branches } from "../../Branches/BranchesContent";
+import { SelectedCompanyProvider } from "../../context/SelectedCompanyContext";
+import { Sidebar } from "../../SideBar/Sidebar";
+import { Branches } from "../../components/Branches/BranchesContent";
 import styles from "./DashBoard.module.css";
 
 export const DashBoard = () => {

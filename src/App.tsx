@@ -1,4 +1,4 @@
-import { Home } from "./components/screens/Home"
+import { Home } from "./screens/Home/Home"
 
 function App() {
 
