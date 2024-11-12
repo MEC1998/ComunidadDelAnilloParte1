@@ -4,12 +4,14 @@ import { useState } from "react";
 import styles from "./Sidebar.module.css";
 import { useSelectedCompany } from "../context/SelectedCompanyContext";
 import { IEmpresa } from "../types/dtos/empresa/IEmpresa";
-import { CompanyForm } from "../components/ModalCompanyForm/CompanyForm";
+import { ModalCompanyForm } from "../components/ModalCompanyForm/ModalCompanyForm";
+
 
 export const Sidebar = () => {
 
   // ESTADOS DE COMPONENTES
   const [companies, setCompanies] = useState<IEmpresa[]>(() => {
+    //para ver si ya tiene datos en el local stotage
     try {
       const savedCompanies = localStorage.getItem('companies');
       return savedCompanies ? JSON.parse(savedCompanies) : [];
@@ -18,6 +20,7 @@ export const Sidebar = () => {
       return [];
     }
   });
+
   const [showForm, setShowForm] = useState(false);
   const [editingCompany, setEditingCompany] = useState<IEmpresa | null>(null);
 
@@ -61,7 +64,7 @@ export const Sidebar = () => {
       <h2 className={styles.title2}>Empresas</h2>
       <button className={styles.addButton} onClick={() => setShowForm(true)}>Agregar Empresa</button>
       {showForm && (
-        <CompanyForm 
+        <ModalCompanyForm
           onAddCompany={editingCompany ? handleUpdateCompany : handleAddCompany}
           onClose={() => {
             setShowForm(false);
@@ -70,6 +73,7 @@ export const Sidebar = () => {
           editingCompany={editingCompany}
         />
       )}
+
       <ul className={styles.sidebarItems}>
         {companies.map((company, index) => (
           <li
@@ -98,6 +102,7 @@ export const Sidebar = () => {
           </li>
         ))}
       </ul>
+      
     </div>
   );
 };

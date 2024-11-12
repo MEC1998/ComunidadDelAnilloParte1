@@ -7,7 +7,7 @@ import { ListBranches } from "../ListBranches/ListBranches";
 import BranchModal from "../BranchModal/BranchModal";
 
 
-export const Branches = () => {
+export const BranchesContent = () => {
   //estado para saber el nombre de la compania
   const { selectedCompany } = useSelectedCompany();
 

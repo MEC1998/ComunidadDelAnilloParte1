@@ -1,6 +1,6 @@
 import { Home } from "./screens/Home/Home"
 
-function App() {
+export function App() {
 
   return (
     <>
@@ -11,4 +11,3 @@ function App() {
   )
 }
 
-export default App

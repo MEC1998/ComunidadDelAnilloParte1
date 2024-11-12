@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import styles from "./CompanyForm.module.css";
+import styles from "./ModalCompanyForm.module.css";
 import { IEmpresa } from "../../types/dtos/empresa/IEmpresa";
 
 
@@ -9,10 +9,10 @@ interface CompanyFormProps {
   editingCompany?: IEmpresa | null;
 }
 
-export const CompanyForm: React.FC<CompanyFormProps> = ({ 
-  onAddCompany, 
-  onClose, 
-  editingCompany 
+export const ModalCompanyForm: React.FC<CompanyFormProps> = ({
+  onAddCompany,
+  onClose,
+  editingCompany
 }) => {
   const [nombre, setNombre] = useState(editingCompany?.nombre || "");
   const [razonSocial, setRazonSocial] = useState(editingCompany?.razonSocial || "");
@@ -26,7 +26,7 @@ export const CompanyForm: React.FC<CompanyFormProps> = ({
     e.preventDefault();
     if (nombre.trim() && razonSocial.trim() && cuit.trim()) {
       let logoUrl: string | null = previewImage;
-      
+
       if (image) {
         const reader = new FileReader();
         logoUrl = await new Promise<string>((resolve) => {
@@ -94,9 +94,9 @@ export const CompanyForm: React.FC<CompanyFormProps> = ({
           />
           {previewImage && (
             <div className={styles.imagePreview}>
-              <img 
-                src={previewImage} 
-                alt="Preview" 
+              <img
+                src={previewImage}
+                alt="Preview"
                 style={{ maxWidth: '200px', marginTop: '10px' }}
               />
             </div>
