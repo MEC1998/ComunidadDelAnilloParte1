@@ -1,26 +1,13 @@
-// src/Sidebar/Sidebar.tsx
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styles from "./Sidebar.module.css";
 import { useSelectedCompany } from "../context/SelectedCompanyContext";
 import { IEmpresa } from "../types/dtos/empresa/IEmpresa";
 import { ModalCompanyForm } from "../components/ModalCompanyForm/ModalCompanyForm";
 
-
 export const Sidebar = () => {
 
   // ESTADOS DE COMPONENTES
-  const [companies, setCompanies] = useState<IEmpresa[]>(() => {
-    //para ver si ya tiene datos en el local stotage
-    try {
-      const savedCompanies = localStorage.getItem('companies');
-      return savedCompanies ? JSON.parse(savedCompanies) : [];
-    } catch (error) {
-      console.error('Error loading companies from localStorage:', error);
-      return [];
-    }
-  });
-
+  const [companies, setCompanies] = useState<IEmpresa[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [editingCompany, setEditingCompany] = useState<IEmpresa | null>(null);
 
@@ -28,15 +15,44 @@ export const Sidebar = () => {
   const { setSelectedCompany } = useSelectedCompany();
 
   //FUNCIONES
-  const handleAddCompany = (company: IEmpresa) => {
+  const fetchCompanies = async () => {
     try {
-      const updatedCompanies = [...companies, company];
-      setCompanies(updatedCompanies);
-      localStorage.setItem('companies', JSON.stringify(updatedCompanies));
-      setShowForm(false);
-      console.log('Companies saved:', updatedCompanies);
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/empresas`);
+      if (!response.ok) {
+        throw new Error('Error al obtener las empresas');
+      }
+      const data: IEmpresa[] = await response.json();
+      setCompanies(data);
     } catch (error) {
-      console.error('Error saving companies to localStorage:', error);
+      console.error('Error fetching companies:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchCompanies();
+  }, []);
+
+  const handleAddCompany = async (company: IEmpresa) => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/empresas`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(company),
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al agregar la empresa');
+      }
+
+      const newCompany = await response.json();
+      const updatedCompanies = [...companies, newCompany];
+      setCompanies(updatedCompanies);
+      setShowForm(false);
+      console.log('Companies updated:', updatedCompanies);
+    } catch (error) {
+      console.error('Error adding company:', error);
     }
   };
 
@@ -46,17 +62,12 @@ export const Sidebar = () => {
   };
 
   const handleUpdateCompany = (updatedCompany: IEmpresa) => {
-    try {
-      const updatedCompanies = companies.map(company => 
-        company.nombre === editingCompany?.nombre ? updatedCompany : company
-      );
-      setCompanies(updatedCompanies);
-      localStorage.setItem('companies', JSON.stringify(updatedCompanies));
-      setShowForm(false);
-      setEditingCompany(null);
-    } catch (error) {
-      console.error('Error updating company:', error);
-    }
+    const updatedCompanies = companies.map(company => 
+      company.nombre === editingCompany?.nombre ? updatedCompany : company
+    );
+    setCompanies(updatedCompanies);
+    setShowForm(false);
+    setEditingCompany(null);
   };
 
   return (

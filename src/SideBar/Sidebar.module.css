@@ -1,10 +1,12 @@
 .sidebar {
   width: 430px; 
+  height: 100%;
   background-color: var(--primary-color);
   display: flex;
   flex-direction: column;
   gap: 10px;
-  color:#ffffff
+  color: #ffffff;
+  overflow: hidden;
 }
 
 .title2 {
@@ -39,6 +41,9 @@
   list-style: none;
   padding: 0;
   margin-top: 20px;
+  flex-grow: 1;
+  overflow-y: auto;
+  max-height: calc(100vh - 150px);
 }
 .sidebarItemTextDesc {
   display: block;

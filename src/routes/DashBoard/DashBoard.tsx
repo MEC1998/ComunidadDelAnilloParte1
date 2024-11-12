@@ -1,4 +1,3 @@
-
 import { BranchesContent } from "../../components/BranchesContent/BranchesContent";
 import { SelectedCompanyProvider } from "../../context/SelectedCompanyContext";
 import { Sidebar } from "../../SideBar/Sidebar";
