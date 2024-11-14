@@ -1,27 +1,27 @@
 import { useState, useEffect } from "react";
+import { useAppDispatch } from '../../../hooks/hooks';
 import styles from "./Sidebar.module.css";
-import { useSelectedCompany } from "../context/SelectedCompanyContext";
-import { IEmpresa } from "../types/dtos/empresa/IEmpresa";
-import { ModalCompanyForm } from "../components/ModalCompanyForm/ModalCompanyForm";
+import { IEmpresa } from "../../../types/dtos/empresa/IEmpresa";
+import { ICreateEmpresaDto } from "../../../types/dtos/empresa/ICreateEmpresaDto";
+import { ModalCompanyForm } from "../modals/ModalCompanyForm/ModalCompanyForm";
+import { fetchEmpresaById } from "../../../redux/slices/selectedCompanySlice";
+import { EmpresaService } from "../../../services/dtos/EmpresaService";
 
-export const Sidebar = () => {
+const empresaService = new EmpresaService();
 
-  // ESTADOS DE COMPONENTES
+interface SidebarProps {
+  className?: string;
+}
+
+export const Sidebar: React.FC<SidebarProps> = ({ className }) => {
+  const dispatch = useAppDispatch();
   const [companies, setCompanies] = useState<IEmpresa[]>([]);
   const [showForm, setShowForm] = useState(false);
-  const [editingCompany, setEditingCompany] = useState<IEmpresa | null>(null);
+  const [editingCompany, setEditingCompany] = useState<ICreateEmpresaDto | null>(null);
 
-  //tomamos el nombre de la empresa
-  const { setSelectedCompany } = useSelectedCompany();
-
-  //FUNCIONES
   const fetchCompanies = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/empresas`);
-      if (!response.ok) {
-        throw new Error('Error al obtener las empresas');
-      }
-      const data: IEmpresa[] = await response.json();
+      const data = await empresaService.getAllEmpresas();
       setCompanies(data);
     } catch (error) {
       console.error('Error fetching companies:', error);
@@ -32,7 +32,7 @@ export const Sidebar = () => {
     fetchCompanies();
   }, []);
 
-  const handleAddCompany = async (company: IEmpresa) => {
+  const handleAddCompany = async (company: ICreateEmpresaDto) => {
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/empresas`, {
         method: 'POST',
@@ -43,14 +43,13 @@ export const Sidebar = () => {
       });
 
       if (!response.ok) {
-        throw new Error('Error al agregar la empresa');
+        const errorText = await response.text();
+        throw new Error(`Error al agregar la empresa: ${errorText}`);
       }
 
       const newCompany = await response.json();
-      const updatedCompanies = [...companies, newCompany];
-      setCompanies(updatedCompanies);
+      setCompanies((prevCompanies) => [...prevCompanies, newCompany]);
       setShowForm(false);
-      console.log('Companies updated:', updatedCompanies);
     } catch (error) {
       console.error('Error adding company:', error);
     }
@@ -61,22 +60,17 @@ export const Sidebar = () => {
     setShowForm(true);
   };
 
-  const handleUpdateCompany = (updatedCompany: IEmpresa) => {
-    const updatedCompanies = companies.map(company => 
-      company.nombre === editingCompany?.nombre ? updatedCompany : company
-    );
-    setCompanies(updatedCompanies);
-    setShowForm(false);
-    setEditingCompany(null);
+  const handleSelectCompany = (id: number) => {
+    dispatch(fetchEmpresaById(id));
   };
 
   return (
-    <div className={styles.sidebar}>
+    <div className={`${styles.sidebar} ${className}`}>
       <h2 className={styles.title2}>Empresas</h2>
       <button className={styles.addButton} onClick={() => setShowForm(true)}>Agregar Empresa</button>
       {showForm && (
         <ModalCompanyForm
-          onAddCompany={editingCompany ? handleUpdateCompany : handleAddCompany}
+          onAddCompany={handleAddCompany}
           onClose={() => {
             setShowForm(false);
             setEditingCompany(null);
@@ -86,11 +80,11 @@ export const Sidebar = () => {
       )}
 
       <ul className={styles.sidebarItems}>
-        {companies.map((company, index) => (
+        {companies.map((company) => (
           <li
-            key={index}
+            key={company.id}
             className={styles.sidebarItem}
-            onClick={() => setSelectedCompany(company.nombre)}
+            onClick={() => handleSelectCompany(company.id)}
           >
             <div className={styles.sidebarItemText}>
               {company.nombre}
@@ -113,7 +107,6 @@ export const Sidebar = () => {
           </li>
         ))}
       </ul>
-      
     </div>
   );
 };

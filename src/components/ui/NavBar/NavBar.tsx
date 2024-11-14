@@ -1,47 +1,33 @@
-import AppBar from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
-import Toolbar from "@mui/material/Toolbar";
-import Container from "@mui/material/Container";
-import Button from "@mui/material/Button";
-import { useNavigate } from "react-router-dom";
-
-// Definición de las páginas y sus rutas
-const pages = [
-  { title: "Persona", route: "/" },
-  // { title: "Producto", route: "/producto" },
-];
+import React from "react";
+import { useAppDispatch, useAppSelector } from "../../../hooks/redux";
+import { fetchEmpresaById } from "../../../redux/slices/selectedCompanySlice";
+import styles from './NavBar.module.css';
 
 // Componente NavBar
 export const NavBar = () => {
-  // Hook de navegación de React Router
-  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const selectedCompany = useAppSelector((state) => state.selectedCompany.company);
 
-  // Función para manejar la navegación a una ruta específica
-  const handleNavigate = (route: string) => {
-    navigate(route);
+  // Simulación de obtener el ID de la empresa (puede venir de props, contexto, etc.)
+  const empresaId = 1;
+
+  // Obtener los datos de la empresa al montar el componente
+  React.useEffect(() => {
+    dispatch(fetchEmpresaById(empresaId));
+  }, [dispatch, empresaId]);
+
+  const handleAddBranch = () => {
+    console.log("Agregar sucursal");
   };
 
   return (
-    // Barra de navegación
-    <AppBar position="static">
-      <Container maxWidth="xl">
-        <Toolbar disableGutters>
-          <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-            {/* Botones para cada página */}
-            {pages.map((page) => (
-              <Button
-                key={page.title}
-                onClick={() => {
-                  handleNavigate(page.route);
-                }}
-                sx={{ my: 2, color: "white", display: "block" }}
-              >
-                {page.title}
-              </Button>
-            ))}
-          </Box>
-        </Toolbar>
-      </Container>
-    </AppBar>
+    <div className={styles.contentTitleButtonBranches}>
+      <h2 className={styles.titleContainer}>
+        {selectedCompany ? `Sucursales de ${selectedCompany.nombre}` : "Seleccione una empresa"}
+      </h2>
+      <button className={styles.addButtonBranch} onClick={handleAddBranch}>
+        Agregar Sucursal
+      </button>
+    </div>
   );
 };

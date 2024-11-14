@@ -1,84 +1,43 @@
 import styles from "./BranchesContent.module.css";
-import { useSelectedCompany } from "../../context/SelectedCompanyContext";
-import { useState } from "react";
-import { Branch } from "../../types/Branch";
+import { useState, useEffect } from "react";
+import { useAppSelector } from "../../hooks/redux";
 import { ISucursal } from "../../types/dtos/sucursal/ISucursal";
-import { ListBranches } from "../ListBranches/ListBranches";
-import BranchModal from "../BranchModal/BranchModal";
+import { SucursalService } from "../../services/dtos/SucursalService";
+import { Card } from "../Card/Card";
 
+const sucursalService = new SucursalService("http://190.221.207.224:8090/sucursales");
 
 export const BranchesContent = () => {
-  //estado para saber el nombre de la compania
-  const { selectedCompany } = useSelectedCompany();
+  const [branches, setBranches] = useState<ISucursal[]>([]);
+  const selectedCompany = useAppSelector((state) => state.selectedCompany.company);
 
-  //MODAL
-  const [isModalOpen, setModalOpen] = useState(false);
-  const handleOpenModal = () => {
-    setModalOpen(true);
-  };
-  const handleCloseModal = () => {
-    setModalOpen(false);
-  };
-const handleConfirm = (data: Partial<ISucursal>) => {
-  const newBranch: Branch = {
-    id: data.id?.toString() || Date.now().toString(),
-    name: data.nombre || '',
-    openingTime: data.horarioApertura || '',
-    closingTime: data.horarioCierre || '',
-    companyName: selectedCompany || '',
-    image: data.logo || null,
-    street: data.domicilio?.calle
-  };
-  
-  setBranches((prevBranches) => [...prevBranches, newBranch]);
-  handleCloseModal();
-};
+  useEffect(() => {
+    console.log("Empresa seleccionada:", selectedCompany);
+    const fetchBranches = async () => {
+      if (selectedCompany) {
+        try {
+          const sucursales = await sucursalService.getSucursalesByEmpresaId(selectedCompany.id);
+          setBranches(sucursales);
+        } catch (error) {
+          console.error("Error al obtener sucursales:", error);
+        }
+      }
+    };
 
-// Estado para las sucursales
-  const [branches, setBranches] = useState<Branch[]>([]); 
-
-  const handleUpdateBranch = (branchId: string, data: Partial<ISucursal>) => {
-    setBranches(prevBranches => 
-      prevBranches.map(branch => 
-        branch.id === branchId 
-          ? {
-              ...branch,
-              name: data.nombre || branch.name,
-              openingTime: data.horarioApertura || branch.openingTime,
-              closingTime: data.horarioCierre || branch.closingTime,
-              image: data.logo || branch.image,
-              street: data.domicilio?.calle || branch.street
-            }
-          : branch
-      )
-    );
-  };
+    fetchBranches();
+  }, [selectedCompany]);
 
   return (
-    <div className={styles.maincontentContainer}>
-      <div className={styles.contentTitleButtonBranches}>
-
-        <div className={styles.titleContainer}>
-          <h2 className={styles.title}>
-            {selectedCompany ? `Sucursales de ${selectedCompany}` : "Seleccione una empresa"}
-          </h2>
-        </div>
-
-        <div className={styles.contentButtonBranch}>
-          <button className={styles.addButtonBranch}   onClick={handleOpenModal}>Agregar Sucursal</button>
-        </div>
-      </div>
-
-      <ListBranches 
-        branches={branches} 
-        onUpdateBranch={handleUpdateBranch}
-      /> {/* Pasa las sucursales al componente ListBranches */}
-
-      {/* Modal para agregar sucursal */}
-      {isModalOpen && (
-        <BranchModal onClose={handleCloseModal} onConfirm={handleConfirm} />
-      )}
+    <div className={styles.branchesContainer}>
+      {branches.map((branch) => (
+        <Card
+          key={branch.id}
+          branchName={branch.nombre}
+          companyName={branch.empresa.nombre}
+          openingHours={`${branch.horarioApertura} - ${branch.horarioCierre}`}
+          image={branch.logo ?? null}
+        />
+      ))}
     </div>
   );
 };
-// con esta linea que se ubica dentro del h2 tittle 2 se verifica y se termina de actualiza el titulo dependiendo si seleccionamos una u otra empresa

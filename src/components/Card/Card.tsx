@@ -1,12 +1,19 @@
 import styles from "./Card.module.css"
 
-export const Card = () => {
+interface CardProps {
+  branchName: string;
+  companyName: string;
+  openingHours: string;
+  image: string | null;
+}
+
+export const Card = ({ branchName, companyName, openingHours, image }: CardProps) => {
     return (
         <div className={styles.card}>
-            <div className={styles.cardTitle}>Titulo</div>
-            <p className={styles.cardDescription}>Descripcion</p>
-            <span className={styles.cardTime}>20:30hs - 01:00hs</span>
-            <img className={styles.cardImg} src="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/0d/cd/d3/e5/comfortable-seating.jpg?w=1200&h=-1&s=1" alt="" />
+            <div className={styles.cardTitle}>{branchName}</div>
+            <p className={styles.cardDescription}>{companyName}</p>
+            <span className={styles.cardTime}>{openingHours}</span>
+            {image && <img className={styles.cardImg} src={image} alt={branchName} />}
 
             <div className={styles.cardButtons}>
                 <button className={styles.cardButton}>

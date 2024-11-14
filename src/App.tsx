@@ -1,13 +1,7 @@
-import { Home } from "./screens/Home/Home"
+import { AppRouter } from "./routes/AppRouter";
 
-export function App() {
-
-  return (
-    <>
-    <div>
-      <Home></Home>
-    </div>
-    </>
-  )
+function App() {
+  return <AppRouter />;
 }
 
+export default App;

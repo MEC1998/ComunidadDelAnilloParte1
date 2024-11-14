@@ -1,0 +1,42 @@
+
+.contentTitleButtonBranches {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #023060;
+    width: 100%;
+    height: 100px;
+    position: relative; 
+}
+
+.titleContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    flex: 1; 
+    color: #ffffff;
+}
+
+.addButtonBranch {
+    position: absolute; 
+    right: 39px; 
+    top: 50%; 
+    transform: translateY(-50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 203px;
+    height: 30px;
+    background-color: var(--secondary-color);
+    color: var(--primary-color);
+    border-radius: 0.4rem;
+    border: none;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4); 
+    cursor: pointer;
+}
+
+.addButtonBranch:hover {
+    background-color: #3A6D8C;
+    color: var(--secondary-color);
+}

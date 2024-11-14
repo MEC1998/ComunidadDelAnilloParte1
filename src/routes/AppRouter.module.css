@@ -1,0 +1,14 @@
+.container {
+  display: flex;
+  height: 100vh;
+}
+
+.sidebar {
+  width: 350px;
+  flex-shrink: 0;
+}
+
+.content {
+  flex-grow: 1;
+  overflow: hidden;
+} 

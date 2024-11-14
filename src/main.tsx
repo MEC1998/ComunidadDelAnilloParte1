@@ -1,24 +1,28 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import './index.css'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { App } from './App'
-import { Provider } from 'react-redux'
-import { store } from './redux/store'
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App.tsx"; // Importamos el componente principal de la aplicación
 
-//almacen de configuracion de caché 
-const queryClient = new QueryClient()
+import "bootstrap/dist/css/bootstrap.min.css"; // Importamos los estilos de Bootstrap
+import "./index.css"; // Asegúrate de importar index.css aquí
 
+import "@fontsource/roboto/300.css"; // Importamos los estilos de la fuente Roboto en diferentes pesos
+import "@fontsource/roboto/400.css";
+import "@fontsource/roboto/500.css";
+import "@fontsource/roboto/700.css";
 
+import { BrowserRouter } from "react-router-dom"; // Importamos BrowserRouter para el enrutamiento
+import { Provider } from "react-redux"; // Importamos Provider para proporcionar el store de Redux
+import { store } from "./redux/store.ts"; // Importamos la tienda de Redux
 
-createRoot(document.getElementById('root')!).render(
-
-
-  <StrictMode>
-    <Provider store={store}>
-      <QueryClientProvider client={queryClient}>
-        <App />
-      </QueryClientProvider>
-    </Provider>
-  </StrictMode>,
-)
+// Renderizamos la aplicación en el elemento con el ID "root"
+ReactDOM.createRoot(document.getElementById("root")!).render(
+  <React.StrictMode>
+    {/* Envolvemos la aplicación en BrowserRouter para el enrutamiento */}
+    <BrowserRouter>
+      {/* Envolvemos la aplicación en Provider y pasamos la tienda de Redux como prop */}
+      <Provider store={store}>
+        <App /> {/* Renderizamos el componente principal de la aplicación */}
+      </Provider>
+    </BrowserRouter>
+  </React.StrictMode>
+);
