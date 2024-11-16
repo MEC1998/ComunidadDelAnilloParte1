@@ -32,42 +32,26 @@ export const NavBar = () => {
   };
 
   const handleModalConfirm = async (data: Partial<ISucursal>) => {
-    if (selectedCompany && data.calle && data.numero && data.cp && data.localidad && data.provincia) {
+    if (selectedCompany) {
       try {
-        const sucursalData = {
-          nombre: `Sucursal ${data.calle} ${data.numero}`,
-          horarioApertura: "09:00",
-          horarioCierre: "18:00",
-          esCasaMatriz: false,
-          latitud: 0,
-          longitud: 0,
-          domicilio: {
-            id: 0,
-            calle: data.calle,
-            numero: Number(data.numero),
-            cp: Number(data.cp),
-            piso: data.piso ? Number(data.piso) : 0,
-            nroDpto: data.nroDpto ? Number(data.nroDpto) : 0,
-            idLocalidad: Number(data.localidad),
-            localidad: {
-              id: Number(data.localidad),
-              nombre: data.provincia,
-              idProvincia: Number(data.provincia),
-              provincia: {
-                id: Number(data.provincia),
-                nombre: data.provincia,
-                pais: {
-                  id: 1,
-                  nombre: "Argentina"
-                }
-              }
-            }
+        const sucursalData: Partial<ISucursal> = {
+          ...data,
+          empresa: {
+            id: selectedCompany.id,
+            nombre: selectedCompany.nombre,
+            razonSocial: selectedCompany.razonSocial,
+            cuit: selectedCompany.cuit,
+            logo: selectedCompany.logo,
+            sucursales: selectedCompany.sucursales,
+            pais: selectedCompany.pais
           },
-          idEmpresa: selectedCompany.id,
-          logo: undefined
+          eliminado: false
         };
 
-        await sucursalService.createSucursal(sucursalData);
+        console.log('Datos a enviar:', sucursalData);
+        const response = await sucursalService.createSucursal(sucursalData);
+        console.log('Respuesta:', response);
+        
         queryClient.invalidateQueries({ queryKey: ['sucursales', selectedCompany.id] });
         setShowModal(false);
       } catch (error) {

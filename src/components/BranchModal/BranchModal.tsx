@@ -106,7 +106,7 @@ const BranchModal: React.FC<BranchModalProps> = ({ onClose, onConfirm }) => {
                                         nombre: values.provincia,
                                         pais: {
                                             id: parseInt(values.paisId),
-                                            nombre: paises.find(p => p.id === parseInt(values.paisId))?.nombre || ''
+                                            nombre: paises.find(p => p.id === parseInt(values.paisId))?.nombre || 'Argentina'
                                         }
                                     }
                                 },
