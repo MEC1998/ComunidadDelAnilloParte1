@@ -1,14 +1,17 @@
-import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { Button, Modal } from "react-bootstrap";
+import { Formik, Form } from "formik";
+import * as Yup from "yup";
+import TextFieldValue from "../ui/TextFildValue/TextFildValue";
 import styles from "./BranchModal.module.css";
 import { ISucursal } from "../../types/dtos/sucursal/ISucursal";
 import { IPais } from "../../types/IPais";
+import { IEmpresa } from "../../types/dtos/empresa/IEmpresa";
 
 
 interface BranchModalProps {
     onClose: () => void;
-    onConfirm: (data: Partial<ISucursal>) => void;
-    initialData?: ISucursal;
+    onConfirm: (data: Partial<ISucursal>) => Promise<void>;
 }
 
 interface RestCountriesResponse {
@@ -36,228 +39,203 @@ const fetchPaises = async (): Promise<IPais[]> => {
         .sort((a: IPais, b: IPais) => a.nombre.localeCompare(b.nombre));
 };
 
-const BranchModal: React.FC<BranchModalProps> = ({ onClose, onConfirm, initialData }) => {
-    const [formData, setFormData] = useState({
-        nombre: initialData?.nombre || "",
-        horarioApertura: initialData?.horarioApertura || "",
-        horarioCierre: initialData?.horarioCierre || "",
-        paisId: initialData?.paisId || "ARG",
-        provincia: initialData?.domicilio?.localidad?.provincia?.nombre || "",
-        localidad: initialData?.domicilio?.localidad?.nombre || "",
-        latitud: initialData?.latitud?.toString() || "",
-        longitud: initialData?.longitud?.toString() || "",
-        calle: initialData?.domicilio?.calle || "",
-        numero: initialData?.domicilio?.numero?.toString() || "",
-        cp: initialData?.domicilio?.cp?.toString() || "",
-        piso: initialData?.domicilio?.piso?.toString() || "",
-        nroDpto: initialData?.domicilio?.nroDpto?.toString() || "",
-        esCasaMatriz: initialData?.esCasaMatriz || false,
-        eliminado: initialData?.eliminado || false,
+const BranchModal: React.FC<BranchModalProps> = ({ onClose, onConfirm }) => {
+    const initialValues = {
+        nombre: "",
+        horarioApertura: "",
+        horarioCierre: "",
+        paisId: "ARG",
+        provincia: "",
+        localidad: "",
+        latitud: "",
+        longitud: "",
+        calle: "",
+        numero: "",
+        cp: "",
+        piso: "",
+        nroDpto: "",
+        esCasaMatriz: false,
+        eliminado: false,
         logo: null as File | null,
-    });
+    };
 
-    const { 
-        data: paises = [],
-        isLoading: paisesLoading,
-        error: paisesError 
-    } = useQuery<IPais[]>({
+    const { data: paises = [], isLoading: paisesLoading, error: paisesError } = useQuery<IPais[]>({
         queryKey: ['paises'],
         queryFn: fetchPaises,
     });
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        const { name, value, type } = e.target;
-        
-        if (name === "paisId") {
-            setFormData(prev => ({
-                ...prev,
-                paisId: value,
-                provincia: "",
-                localidad: ""
-            }));
-        } else if (name === "provincia") {
-            setFormData(prev => ({
-                ...prev,
-                provincia: value,
-                localidad: ""
-            }));
-        } else if (name === "localidad") {
-            setFormData(prev => ({
-                ...prev,
-                localidad: value,
-            }));
-        } else if (type === "checkbox") {
-            setFormData(prev => ({
-                ...prev,
-                [name]: (e.target as HTMLInputElement).checked
-            }));
-        } else {
-            setFormData(prev => ({
-                ...prev,
-                [name]: value
-            }));
-        }
-    };
-
-    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (file) {
-            setFormData(prev => ({
-                ...prev,
-                logo: file
-            }));
-        }
-    };
-
-    const handleSubmit = () => {
-        const submissionData: Partial<ISucursal> = {
-            ...formData,
-            latitud: formData.latitud ? parseFloat(formData.latitud) : undefined,
-            longitud: formData.longitud ? parseFloat(formData.longitud) : undefined,
-            logo: formData.logo ? URL.createObjectURL(formData.logo) : initialData?.logo
-        };
-        onConfirm(submissionData);
-        onClose();
-    };
-
     return (
-        <div className={styles.modalOverlay}>
-            <div className={styles.modal}>
-                <h2>{initialData ? 'Editar sucursal' : 'Agregar sucursal'}</h2>
-                <form className={styles.form}>
-                    <input
-                        type="text"
-                        name="nombre"
-                        placeholder="Nombre de la sucursal"
-                        value={formData.nombre}
-                        onChange={handleChange}
-                    />
-                    <input
-                        type="text"
-                        name="horarioApertura"
-                        placeholder="Horario de apertura"
-                        value={formData.horarioApertura}
-                        onChange={handleChange}
-                    />
-                    <input
-                        type="text"
-                        name="horarioCierre"
-                        placeholder="Horario de cierre"
-                        value={formData.horarioCierre}
-                        onChange={handleChange}
-                    />
+        <Modal show={true} onHide={onClose} size="lg" backdrop="static" keyboard={false}>
+            <Modal.Header closeButton>
+                <Modal.Title>Agregar sucursal</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <Formik
+                    initialValues={initialValues}
+                    validationSchema={Yup.object().shape({
+                        nombre: Yup.string().required("Campo requerido"),
+                        horarioApertura: Yup.string().required("Campo requerido"),
+                        horarioCierre: Yup.string().required("Campo requerido"),
+                        paisId: Yup.string().required("Campo requerido"),
+                        provincia: Yup.string().required("Campo requerido"),
+                        localidad: Yup.string().required("Campo requerido"),
+                        calle: Yup.string().required("Campo requerido"),
+                        numero: Yup.string().required("Campo requerido"),
+                        cp: Yup.string().required("Campo requerido"),
+                    })}
+                    onSubmit={(values) => {
+                        const submissionData: Partial<ISucursal> = {
+                            nombre: values.nombre,
+                            horarioApertura: values.horarioApertura,
+                            horarioCierre: values.horarioCierre,
+                            esCasaMatriz: values.esCasaMatriz,
+                            latitud: values.latitud ? parseFloat(values.latitud) : 0,
+                            longitud: values.longitud ? parseFloat(values.longitud) : 0,
+                            domicilio: {
+                                id: 0,
+                                calle: values.calle,
+                                numero: parseInt(values.numero),
+                                cp: parseInt(values.cp),
+                                piso: parseInt(values.piso),
+                                nroDpto: parseInt(values.nroDpto),
+                                localidad: {
+                                    id: 0,
+                                    nombre: values.localidad,
+                                    provincia: {
+                                        id: 0,
+                                        nombre: values.provincia,
+                                        pais: {
+                                            id: parseInt(values.paisId),
+                                            nombre: paises.find(p => p.id === parseInt(values.paisId))?.nombre || ''
+                                        }
+                                    }
+                                },
+                            },
+                            empresa: {
+                                id: 0
+                            } as IEmpresa,
+                            logo: values.logo ? URL.createObjectURL(values.logo) || undefined : undefined
+                        };
+                        onConfirm(submissionData);
+                        onClose();
+                    }}
+                >
+                    {({ handleChange, handleBlur, values, touched, errors }) => (
+                        <Form className={styles.formContent}>
+                            {/* Sección Información General */}
+                            <div className={styles.section}>
+                                <h5>Información General</h5>
+                                <div className={styles.row}>
+                                    <div className={styles.col}>
+                                        <TextFieldValue 
+                                            label="Nombre:" 
+                                            name="nombre" 
+                                            type="text" 
+                                            placeholder="Nombre de la sucursal" 
+                                        />
+                                    </div>
+                                </div>
 
-                    <select 
-                        name="paisId" 
-                        value={formData.paisId} 
-                        onChange={handleChange}
-                        disabled={paisesLoading}
-                    >
-                        <option value="">Seleccione un país</option>
-                        {paisesError ? (
-                            <option disabled>Error al cargar países</option>
-                        ) : (
-                            paises.map(pais => (
-                                <option key={pais.id} value={pais.id}>
-                                    {pais.nombre}
-                                </option>
-                            ))
-                        )}
-                    </select>
+                                <div className={styles.row}>
+                                    <div className={styles.col}>
+                                        <TextFieldValue 
+                                            label="Horario Apertura:" 
+                                            name="horarioApertura" 
+                                            type="time" 
+                                            placeholder="Horario de apertura" 
+                                        />
+                                    </div>
+                                    <div className={styles.col}>
+                                        <TextFieldValue 
+                                            label="Horario Cierre:" 
+                                            name="horarioCierre" 
+                                            type="time" 
+                                            placeholder="Horario de cierre" 
+                                        />
+                                    </div>
+                                </div>
+                            </div>
 
-                    <input
-                        type="text"
-                        name="provincia"
-                        placeholder="Provincia"
-                        value={formData.provincia}
-                        onChange={handleChange}
-                    />
+                            {/* Sección Ubicación */}
+                            <div className={styles.section}>
+                                <h5>Ubicación</h5>
+                                <div className={styles.row}>
+                                    <div className={styles.col}>
+                                        <div className={styles.formGroup}>
+                                            <label>País:</label>
+                                            <select 
+                                                className="form-control"
+                                                name="paisId" 
+                                                onChange={handleChange}
+                                                onBlur={handleBlur}
+                                                value={values.paisId}
+                                                disabled={paisesLoading}
+                                            >
+                                                <option value="">Seleccione un país</option>
+                                                {!paisesError && paises.map(pais => (
+                                                    <option key={pais.id} value={pais.id}>{pais.nombre}</option>
+                                                ))}
+                                            </select>
+                                            {touched.paisId && errors.paisId && (
+                                                <div className="error-message">{errors.paisId}</div>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
 
-                    <input
-                        type="text"
-                        name="localidad"
-                        placeholder="Localidad"
-                        value={formData.localidad}
-                        onChange={handleChange}
-                    />
+                                <div className={styles.row}>
+                                    <div className={styles.col}>
+                                        <TextFieldValue label="Provincia:" name="provincia" type="text" placeholder="Provincia" />
+                                    </div>
+                                    <div className={styles.col}>
+                                        <TextFieldValue label="Localidad:" name="localidad" type="text" placeholder="Localidad" />
+                                    </div>
+                                </div>
 
-                    <input
-                        type="text"
-                        name="calle"
-                        placeholder="Nombre de la calle"
-                        value={formData.calle}
-                        onChange={handleChange}
-                    />
-                    <input
-                        type="text"
-                        name="numero"
-                        placeholder="Número"
-                        value={formData.numero}
-                        onChange={handleChange}
-                    />
-                    <input
-                        type="text"
-                        name="cp"
-                        placeholder="Código postal"
-                        value={formData.cp}
-                        onChange={handleChange}
-                    />
-                    <input
-                        type="text"
-                        name="piso"
-                        placeholder="Piso"
-                        value={formData.piso}
-                        onChange={handleChange}
-                    />
-                    <input
-                        type="text"
-                        name="nroDpto"
-                        placeholder="Número de departamento"
-                        value={formData.nroDpto}
-                        onChange={handleChange}
-                    />
-                    <input
-                        type="text"
-                        name="latitud"
-                        placeholder="Latitud"
-                        value={formData.latitud}
-                        onChange={handleChange}
-                    />
-                    <input
-                        type="text"
-                        name="longitud"
-                        placeholder="Longitud"
-                        value={formData.longitud}
-                        onChange={handleChange}
-                    />
+                                <div className={styles.row}>
+                                    <div className={styles.col}>
+                                        <TextFieldValue label="Calle:" name="calle" type="text" placeholder="Nombre de la calle" />
+                                    </div>
+                                    <div className={styles.col}>
+                                        <TextFieldValue label="Número:" name="numero" type="text" placeholder="Número" />
+                                    </div>
+                                </div>
 
-                    <label className={styles.inputContainer}>
-                        <input
-                            type="checkbox"
-                            name="esCasaMatriz"
-                            checked={formData.esCasaMatriz}
-                            onChange={handleChange}
-                        />
-                        Casa Matriz
-                    </label>
+                                <div className={styles.row}>
+                                    <div className={styles.col}>
+                                        <TextFieldValue label="Código Postal:" name="cp" type="text" placeholder="Código postal" />
+                                    </div>
+                                    <div className={styles.col}>
+                                        <TextFieldValue label="Piso:" name="piso" type="text" placeholder="Piso" />
+                                    </div>
+                                    <div className={styles.col}>
+                                        <TextFieldValue label="Departamento:" name="nroDpto" type="text" placeholder="Número de departamento" />
+                                    </div>
+                                </div>
 
-                    <input
-                        type="file"
-                        name="logo"
-                        accept="image/*"
-                        onChange={handleImageChange}
-                    />
-                </form>
-                <div className={styles.buttonContainer}>
-                    <button className={styles.cancelButton} onClick={onClose}>
-                        Cancelar
-                    </button>
-                    <button className={styles.confirmButton} onClick={handleSubmit}>
-                        Confirmar
-                    </button>
-                </div>
-            </div>
-        </div>
+                                <div className={styles.row}>
+                                    <div className={styles.col}>
+                                        <TextFieldValue label="Latitud:" name="latitud" type="text" placeholder="Latitud" />
+                                    </div>
+                                    <div className={styles.col}>
+                                        <TextFieldValue label="Longitud:" name="longitud" type="text" placeholder="Longitud" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className={styles.buttons}>
+                                <Button variant="success" type="submit">
+                                    Confirmar
+                                </Button>
+                                <Button variant="secondary" onClick={onClose}>
+                                    Cancelar
+                                </Button>
+                            </div>
+                        </Form>
+                    )}
+                </Formik>
+            </Modal.Body>
+        </Modal>
     );
 };
 

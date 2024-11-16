@@ -1,35 +1,24 @@
+import { useQuery } from "@tanstack/react-query";
 import styles from "./BranchesContent.module.css";
-import { useState, useEffect } from "react";
 import { useAppSelector } from "../../hooks/redux";
 import { ISucursal } from "../../types/dtos/sucursal/ISucursal";
 import { SucursalService } from "../../services/dtos/SucursalService";
 import { Card } from "../Card/Card";
 
-const sucursalService = new SucursalService("http://190.221.207.224:8090/sucursales");
+const sucursalService = new SucursalService();
 
 export const BranchesContent = () => {
-  const [branches, setBranches] = useState<ISucursal[]>([]);
   const selectedCompany = useAppSelector((state) => state.selectedCompany.company);
 
-  useEffect(() => {
-    console.log("Empresa seleccionada:", selectedCompany);
-    const fetchBranches = async () => {
-      if (selectedCompany) {
-        try {
-          const sucursales = await sucursalService.getSucursalesByEmpresaId(selectedCompany.id);
-          setBranches(sucursales);
-        } catch (error) {
-          console.error("Error al obtener sucursales:", error);
-        }
-      }
-    };
-
-    fetchBranches();
-  }, [selectedCompany]);
+  const { data: branches = [] } = useQuery({
+    queryKey: ['sucursales', selectedCompany?.id],
+    queryFn: () => selectedCompany ? sucursalService.getSucursalesByEmpresaId(selectedCompany.id) : [],
+    enabled: !!selectedCompany
+  });
 
   return (
     <div className={styles.branchesContainer}>
-      {branches.map((branch) => (
+      {branches.map((branch: ISucursal) => (
         <Card
           key={branch.id}
           branchName={branch.nombre}
