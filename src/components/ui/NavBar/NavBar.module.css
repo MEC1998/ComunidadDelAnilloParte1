@@ -1,4 +1,4 @@
-.navbar {
+.navbars {
   height: 100px;
   width: 100vw;
   background-color: var(--primary-color);
@@ -7,7 +7,7 @@
   justify-content: center; /* Centra el contenido horizontalmente */
 }
 
-.toolbar {
+.toolbarr {
   width: 100%;
   display: flex;
   justify-content: space-between; /* Espacia los elementos */

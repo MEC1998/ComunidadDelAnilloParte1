@@ -1,73 +1,45 @@
 import { useEffect, useState } from "react";
 
-import { PersonaService } from "../../services/PersonaService";
-import { IPersona } from "../../types/IPersona";
+import { ProductosService } from "../../services/dtos/ProductosService";
+import { IProductos } from "../../types/dtos/productos/IProductos";
 import { TableGeneric } from "../ui/TableGeneric/TableGeneric";
-import { ModalPersona } from "../ui/modals/ModalPersona/ModalPersona";
 import { useAppDispatch } from "../../hooks/redux";
 import { setDataTable } from "../../redux/slices/TablaReducer";
 import Swal from "sweetalert2";
 
 import { Button, CircularProgress } from "@mui/material";
+import { ModalProducto } from "../ui/modals/ModalProductos/ModalProductos";
 
 
-
+ 
 
 // Definición de la URL base de la API desde el archivo .env 
 const API_URL = import.meta.env.VITE_API_URL;
 
-export const ScreenPersona = () => {
+export const ScreenSucursal = () => {
   // Estado para controlar la carga de datos
   const [loading, setLoading] = useState(false);
   const [openModal, setOpenModal] = useState(false);
 
-  const personaService = new PersonaService(API_URL + "/personas");
+  const productosService = new ProductosService(API_URL + "/productos");
 
   //hook personalizado (redux)
   const dispatch = useAppDispatch();
 
-  // Columnas de la tabla de personas
+  // Columnas de la tabla de productos
   const ColumnsTablePersona = [
     {
       label: "id",
       key: "id",
-      render: (persona: IPersona) => (persona?.id ? persona.id : 0),
+      render: (producto: IProductos) => (producto?.id ? producto.id : 0),
     },
-    { label: "Nombre", key: "firstName" },
-    { label: "Apellido", key: "lastName" },
-    {
-      label: "Email",
-      key: "email",
-    },
-    {
-      label: "Telefono",
-      key: "phoneNumber",
-    },
-    {
-      label: "Direccion",
-      key: "adress",
-    },
-    {
-      label: "Fecha de Nacimiento",
-      key: "birthdate",
-      render: (persona: IPersona) => {
-        const dateFormatOptions: Intl.DateTimeFormatOptions = {
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-        };
-        const date = new Date(persona.birthdate);
-        const formatedDate = date.toLocaleDateString(
-          "es-AR",
-          dateFormatOptions
-        );
-        return formatedDate;
-      },
-    },
+    { label: "Nombre", key: "denominacion" },
+    { label: "Precio", key: "precioVenta" },
+    { label: "Descripción", key: "descripcion" },
     { label: "Acciones", key: "acciones" },
   ];
 
-  // Función para manejar el borrado de una persona
+  // Función para manejar el borrado de un producto
   const handleDelete = async (id: number) => {
     // Mostrar confirmación antes de eliminar
     Swal.fire({
@@ -81,17 +53,17 @@ export const ScreenPersona = () => {
       cancelButtonText: "Cancelar",
     }).then((result) => {
       if (result.isConfirmed) {
-        // Eliminar la persona si se confirma
-        personaService.delete(id).then(() => {
-          getPersonas();
+        // Eliminar el producto si se confirma
+        productosService.delete(id).then(() => {
+          getProductos();
         });
       }
     });
   };
-  // Función para obtener las personas
-  const getPersonas = async () => {
-    await personaService.getAll().then((personaData) => {
-      dispatch(setDataTable(personaData));
+  // Función para obtener los productos
+  const getProductos = async () => {
+    await productosService.getAll().then((productosData) => {
+      dispatch(setDataTable(productosData));
       setLoading(false);
     });
   };
@@ -99,7 +71,7 @@ export const ScreenPersona = () => {
   // Efecto para cargar los datos al inicio
   useEffect(() => {
     setLoading(true);
-    getPersonas();
+    getProductos();
   }, []);
 
   return (
@@ -113,7 +85,7 @@ export const ScreenPersona = () => {
             width: "90%",
           }}
         >
-          {/* Botón para abrir el modal de agregar persona */}
+          {/* Botón para abrir el modal de agregar producto */}
           <Button
             onClick={() => {
               setOpenModal(true);
@@ -140,8 +112,8 @@ export const ScreenPersona = () => {
             <h2>Cargando...</h2>
           </div>
         ) : (
-          // Mostrar la tabla de personas una vez que los datos se han cargado
-          <TableGeneric<IPersona>
+          // Mostrar la tabla de productos una vez que los datos se han cargado
+          <TableGeneric<IProductos>
             handleDelete={handleDelete}
             columns={ColumnsTablePersona}
             setOpenModal={setOpenModal}
@@ -149,9 +121,9 @@ export const ScreenPersona = () => {
         )}
       </div>
 
-      {/* Modal para agregar o editar una persona */}
-      <ModalPersona
-        getPersonas={getPersonas}
+      {/* Modal para agregar o editar un producto */}
+      <ModalProducto
+        getPersonas={getProductos}
         openModal={openModal}
         setOpenModal={setOpenModal}
       />

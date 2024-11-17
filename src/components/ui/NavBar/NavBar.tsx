@@ -6,7 +6,7 @@ import Button from "@mui/material/Button";
 import { useNavigate } from "react-router-dom";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useAppSelector } from "../../../hooks/redux";
-import styles from "./NavBar.module.css"; // Importa los estilos del módulo
+import styles from './NavBar.module.css';
 
 // Componente NavBar
 export const NavBar = () => {
@@ -21,9 +21,9 @@ export const NavBar = () => {
 
   return (
     // Barra de navegación
-    <AppBar position="static" className={styles.navbar}>
+    <AppBar position="static" className={styles.navbars}>
       <Container maxWidth="xl">
-        <Toolbar disableGutters className={styles.toolbar}>
+        <Toolbar disableGutters className={styles.toolbarr}>
           {/* Botón de regreso */}
           <Button
             onClick={handleBack}

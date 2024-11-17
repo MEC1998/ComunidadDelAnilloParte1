@@ -6,3 +6,6 @@ npm run dev
 
 CORRER EN OTRA CONSOLA EL JSON SERVER
 json-server --watch db.json --port 3001
+
+INSTALAR PLUGIN DE REACT
+npm install @vitejs/plugin-react --save-dev

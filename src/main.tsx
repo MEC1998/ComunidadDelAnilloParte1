@@ -2,8 +2,8 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.tsx"; // Importamos el componente principal de la aplicación
 
-import "bootstrap/dist/css/bootstrap.min.css"; // Importamos los estilos de Bootstrap
-import "./index.css"; // Asegúrate de importar index.css aquí
+import "bootstrap/dist/css/bootstrap.min.css";
+import "./index.css"; 
 
 import "@fontsource/roboto/300.css"; // Importamos los estilos de la fuente Roboto en diferentes pesos
 import "@fontsource/roboto/400.css";

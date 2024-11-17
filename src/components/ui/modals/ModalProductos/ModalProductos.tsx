@@ -2,41 +2,42 @@
 import { Button, Modal } from "react-bootstrap";
 import * as Yup from "yup";
 
-import { IPersona } from "../../../../types/IPersona";
+import { ICreateProducto } from "../../../../types/dtos/productos/ICreateProducto";
 import TextFieldValue from "../../TextFildValue/TextFildValue";
 import { Form, Formik } from "formik";
-import { PersonaService } from "../../../../services/PersonaService";
+import { ProductosService } from "../../../../services/dtos/ProductosService";
 import { useAppDispatch, useAppSelector } from "../../../../hooks/redux";
-import { removeElementActive } from "../../../../redux/slices/ActiveElementReducer.";
+import { removeElementActive } from "../../../../redux/slices/TablaReducer";
+import { IProductos } from "../../../../types/dtos/productos/IProductos";
+import { ICategorias } from "../../../../types/dtos/categorias/ICategorias";
 const API_URL = import.meta.env.VITE_API_URL;
 
-// Interfaz para los props del componente ModalPersona
-interface IModalPersona {
-  getPersonas: Function; // Función para obtener las personas
+// Interfaz para los props del componente ModalProducto
+interface IModalProducto {
+  getProductos: Function; // Función para obtener los productos
   openModal: boolean;
   setOpenModal: (state: boolean) => void;
 }
 
-// Definición del componente ModalPersona
-export const ModalPersona = ({
-  getPersonas,
+// Definición del componente ModalProducto
+export const ModalProducto = ({
+  getProductos,
   openModal,
   setOpenModal,
-}: IModalPersona) => {
+}: IModalProducto) => {
   // Valores iniciales para el formulario
-  const initialValues: IPersona = {
-    id: 0,
-    phoneNumber: "",
-    adress: "",
-    birthdate: "" as any,
-    email: "",
-    firstName: "",
-    lastName: "",
+  const initialValues: ICreateProducto = {
+    denominacion: "",
+    precioVenta: 0,
+    descripcion: "",
+    habilitado: true,
+    codigo: "",
+    idCategoria: 0,
+    idAlergenos: [],
+    imagenes: [],
   };
 
-  // URL de la API obtenida desde las variables de entorno
-  const actualDate: string = new Date().toISOString().split("T")[0];
-  const apiPersona = new PersonaService(API_URL + "/personas");
+  const apiProducto = new ProductosService(API_URL + "/productos");
 
   const elementActive = useAppSelector(
     (state) => state.tablaReducer.elementActive
@@ -61,42 +62,57 @@ export const ModalPersona = ({
         keyboard={false}
       >
         <Modal.Header closeButton>
-          {/* Título del modal dependiendo de si se está editando o añadiendo una persona */}
+          {/* Título del modal dependiendo de si se está editando o añadiendo un producto */}
           {elementActive ? (
-            <Modal.Title>Editar una persona:</Modal.Title>
+            <Modal.Title>Editar un producto:</Modal.Title>
           ) : (
-            <Modal.Title>Añadir una persona:</Modal.Title>
+            <Modal.Title>Añadir un producto:</Modal.Title>
           )}
         </Modal.Header>
         <Modal.Body>
           {/* Componente Formik para el formulario */}
           <Formik
             validationSchema={Yup.object({
-              phoneNumber: Yup.string().required("Campo requerido"),
-              adress: Yup.string().required("Campo requerido"),
-              birthdate: Yup.date()
-                .required("Campo requerido")
-                .max(
-                  actualDate,
-                  "La fecha no puede ser mayor a la fecha actual"
-                ),
-              email: Yup.string()
-                .email("Tiene que ser un correo electrónico válido")
-                .required("Campo requerido"),
-              firstName: Yup.string().required("Campo requerido"),
-              lastName: Yup.string().required("Campo requerido"),
+              denominacion: Yup.string().required("Campo requerido"),
+              precioVenta: Yup.number().required("Campo requerido"),
+              descripcion: Yup.string().required("Campo requerido"),
+              habilitado: Yup.boolean().required("Campo requerido"),
+              codigo: Yup.string().required("Campo requerido"),
+              idCategoria: Yup.number().required("Campo requerido"),
+              idAlergenos: Yup.array().of(Yup.number()).required("Campo requerido"),
+              imagenes: Yup.array().of(Yup.object()).required("Campo requerido"),
             })}
-            initialValues={elementActive ? elementActive : initialValues}
+            initialValues={{
+              ...initialValues,
+              ...elementActive,
+            }}
             enableReinitialize={true}
-            onSubmit={async (values: IPersona) => {
+            onSubmit={async (values: ICreateProducto) => {
               // Enviar los datos al servidor al enviar el formulario
               if (elementActive) {
-                await apiPersona.put(elementActive?.id, values);
+                const producto: IProductos = {
+                  ...values,
+                  id: elementActive.id,
+                  categoria: elementActive.categoria, // Asegúrate de que estas propiedades existan
+                  eliminado: elementActive.eliminado,
+                  alergenos: elementActive.alergenos,
+                };
+                await apiProducto.put(elementActive.id, producto);
               } else {
-                await apiPersona.post(values);
+                const defaultCategoria: ICategorias = {
+                  // propiedades necesarias para un objeto ICategorias
+                };
+                const producto: IProductos = {
+                  ...values,
+                  id: 0, // O el valor que corresponda para un nuevo producto
+                  categoria: defaultCategoria, // Asigna un valor por defecto válido
+                  eliminado: false, // O el valor por defecto
+                  alergenos: [],
+                };
+                await apiProducto.post(producto);
               }
-              // Obtener las personas actualizadas y cerrar el modal
-              getPersonas();
+              // Obtener los productos actualizados y cerrar el modal
+              getProductos();
               handleClose();
             }}
           >
@@ -107,43 +123,36 @@ export const ModalPersona = ({
                   <div className="container_Form_Ingredientes">
                     {/* Campos del formulario */}
                     <TextFieldValue
-                      label="Nombre:"
-                      name="firstName"
+                      label="Denominación:"
+                      name="denominacion"
                       type="text"
-                      placeholder="Nombre"
+                      placeholder="Denominación"
                     />
                     <TextFieldValue
-                      label="Apellido:"
-                      name="lastName"
-                      type="text"
-                      placeholder="Apellido"
-                    />
-
-                    <TextFieldValue
-                      label="Correo electrónico:"
-                      name="email"
-                      type="text"
-                      placeholder="Mail"
-                    />
-
-                    <TextFieldValue
-                      label="Dirección:"
-                      name="adress"
-                      type="text"
-                      placeholder="Direccion"
-                    />
-                    <TextFieldValue
-                      label="Número de teléfono:"
-                      name="phoneNumber"
+                      label="Precio de Venta:"
+                      name="precioVenta"
                       type="number"
-                      placeholder="Numero de telefono"
+                      placeholder="Precio de Venta"
                     />
                     <TextFieldValue
-                      label="Fecha de nacimiento:"
-                      name="birthdate"
-                      type="date"
-                      placeholder="Fecha de nacimiento"
+                      label="Descripción:"
+                      name="descripcion"
+                      type="text"
+                      placeholder="Descripción"
                     />
+                    <TextFieldValue
+                      label="Código:"
+                      name="codigo"
+                      type="text"
+                      placeholder="Código"
+                    />
+                    <TextFieldValue
+                      label="ID Categoría:"
+                      name="idCategoria"
+                      type="number"
+                      placeholder="ID Categoría"
+                    />
+                    {/* Otros campos según sea necesario */}
                   </div>
                   {/* Botón para enviar el formulario */}
                   <div className="d-flex justify-content-end">

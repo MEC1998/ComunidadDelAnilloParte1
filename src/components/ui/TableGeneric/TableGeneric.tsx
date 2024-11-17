@@ -12,14 +12,14 @@ import { useAppSelector } from "../../../hooks/redux";
 
 // Definimos la interfaz para cada columna de la tabla
 interface ITableColumn<T> {
-  label: string; // Etiqueta de la columna
-  key: string; // Clave que corresponde a la propiedad del objeto en los datos
-  render?: (item: T) => React.ReactNode; // Función opcional para personalizar la renderización del contenido de la celda
+  label: string;
+  key: string;
+  render?: (item: T) => React.ReactNode;
 }
 
 export interface ITableProps<T> {
-  columns: ITableColumn<T>[]; // Definición de las columnas de la tabla
-  handleDelete: (id: number) => void; // Función para manejar la eliminación de un elemento
+  columns: ITableColumn<T>[];
+  handleDelete: (id: number) => void;
   setOpenModal: (state: boolean) => void;
 }
 

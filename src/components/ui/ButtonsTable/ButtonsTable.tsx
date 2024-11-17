@@ -1,11 +1,11 @@
 import { Button } from "@mui/material";
 import { useAppDispatch } from "../../../hooks/redux";
 import { setElementActive } from "../../../redux/slices/TablaReducer";
-import { IPersona } from "../../../types/IPersona";
+import { IProductos } from "../../../types/dtos/productos/IProductos";
 
 // Interfaz para los props del componente
 interface IButtonsTable {
-  el: IPersona; // Elemento de tipo IPersona
+  el: IProductos; // Elemento de tipo IProductos
   handleDelete: (id: number) => void; // Función para manejar la eliminación de un elemento
   setOpenModal: (state: boolean) => void; // Función para manejar la eliminación de un elemento
 }
