@@ -2,11 +2,11 @@ import { useQuery } from "@tanstack/react-query";
 import { Button, Modal } from "react-bootstrap";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
-import TextFieldValue from "../ui/TextFildValue/TextFildValue";
 import styles from "./BranchModal.module.css";
-import { ISucursal } from "../../types/dtos/sucursal/ISucursal";
-import { IPais } from "../../types/IPais";
-import { IEmpresa } from "../../types/dtos/empresa/IEmpresa";
+import { IPais } from "../../../../types/IPais";
+import { ISucursal } from "../../../../types/dtos/sucursal/ISucursal";
+import { IEmpresa } from "../../../../types/dtos/empresa/IEmpresa";
+import TextFieldValue from "../../TextFildValue/TextFildValue";
 
 
 interface BranchModalProps {

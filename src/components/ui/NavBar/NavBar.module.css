@@ -1,42 +1,38 @@
-
-.contentTitleButtonBranches {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #023060;
-    width: 100%;
-    height: 100px;
-    position: relative; 
+.navbar {
+  height: 100px;
+  width: 100vw;
+  background-color: var(--primary-color);
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Centra el contenido horizontalmente */
 }
 
-.titleContainer {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    flex: 1; 
-    color: #ffffff;
+.toolbar {
+  width: 100%;
+  display: flex;
+  justify-content: space-between; /* Espacia los elementos */
+  align-items: center;
 }
 
-.addButtonBranch {
-    position: absolute; 
-    right: 39px; 
-    top: 50%; 
-    transform: translateY(-50%);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 203px;
-    height: 30px;
-    background-color: var(--secondary-color);
-    color: var(--primary-color);
-    border-radius: 0.4rem;
-    border: none;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4); 
-    cursor: pointer;
+.button {
+  margin: 2rem 0;
+  color: white;
+  display: block;
+  font-size: 1.2rem; /* Aumenta el tamaño del texto */
 }
 
-.addButtonBranch:hover {
-    background-color: #3A6D8C;
-    color: var(--secondary-color);
+.arrowButton {
+  border: 2px solid white;
+  border-radius: 4px;
+  transition: background-color 0.3s, color 0.3s;
+  color: white; /* Asegura que el texto y los íconos sean blancos */
 }
+
+.arrowButton:hover {
+  background-color: white;
+  color: var(--primary-color);
+}
+
+.arrowButton svg {
+  fill: white; /* Asegura que el ícono de la flecha sea blanco */
+} 

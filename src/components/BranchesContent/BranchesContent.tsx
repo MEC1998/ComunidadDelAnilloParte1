@@ -25,6 +25,7 @@ export const BranchesContent = () => {
           companyName={branch.empresa.nombre}
           openingHours={`${branch.horarioApertura} - ${branch.horarioCierre}`}
           image={branch.logo ?? null}
+          branchData={branch}
         />
       ))}
     </div>

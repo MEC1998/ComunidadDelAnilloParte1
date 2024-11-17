@@ -1,86 +1,44 @@
-import React, { useState } from "react";
-import { useAppDispatch, useAppSelector } from "../../../hooks/redux";
-import { fetchEmpresaById } from "../../../redux/slices/selectedCompanySlice";
-import styles from './NavBar.module.css';
-import BranchModal from "../../BranchModal/BranchModal";
-import { ISucursal } from "../../../types/dtos/sucursal/ISucursal";
-import { SucursalService } from "../../../services/dtos/SucursalService";
-import { useQueryClient } from "@tanstack/react-query";
+import AppBar from "@mui/material/AppBar";
+import Box from "@mui/material/Box";
+import Toolbar from "@mui/material/Toolbar";
+import Container from "@mui/material/Container";
+import Button from "@mui/material/Button";
+import { useNavigate } from "react-router-dom";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { useAppSelector } from "../../../hooks/redux";
+import styles from "./NavBar.module.css"; // Importa los estilos del módulo
 
 // Componente NavBar
 export const NavBar = () => {
-  const dispatch = useAppDispatch();
-  const selectedCompany = useAppSelector((state) => state.selectedCompany.company);
-  const [showModal, setShowModal] = useState(false);
-  const queryClient = useQueryClient();
-  const sucursalService = new SucursalService();
+  // Hook de navegación de React Router
+  const navigate = useNavigate();
+  const selectedBranch = useAppSelector((state) => state.selectedBranch.branch);
 
-  // Simulación de obtener el ID de la empresa (puede venir de props, contexto, etc.)
-  const empresaId = 1;
-
-  // Obtener los datos de la empresa al montar el componente
-  React.useEffect(() => {
-    dispatch(fetchEmpresaById(empresaId));
-  }, [dispatch, empresaId]);
-
-  const handleAddBranch = () => {
-    setShowModal(true);
-  };
-
-  const handleModalClose = () => {
-    setShowModal(false);
-  };
-
-  const handleModalConfirm = async (data: Partial<ISucursal>) => {
-    if (selectedCompany) {
-      try {
-        const sucursalData: Partial<ISucursal> = {
-          ...data,
-          empresa: {
-            id: selectedCompany.id,
-            nombre: selectedCompany.nombre,
-            razonSocial: selectedCompany.razonSocial,
-            cuit: selectedCompany.cuit,
-            logo: selectedCompany.logo,
-            sucursales: selectedCompany.sucursales,
-            pais: selectedCompany.pais
-          },
-          eliminado: false
-        };
-
-        console.log('Datos a enviar:', sucursalData);
-        const response = await sucursalService.createSucursal(sucursalData);
-        console.log('Respuesta:', response);
-        
-        queryClient.invalidateQueries({ queryKey: ['sucursales', selectedCompany.id] });
-        setShowModal(false);
-      } catch (error) {
-        console.error('Error al crear la sucursal:', error);
-      }
-    }
+  // Función para regresar a la página anterior
+  const handleBack = () => {
+    navigate(-1); // Navega a la página anterior
   };
 
   return (
-    <>
-      <div className={styles.contentTitleButtonBranches}>
-        <h2 className={styles.titleContainer}>
-          {selectedCompany ? `Sucursales de ${selectedCompany.nombre}` : "Seleccione una empresa"}
-        </h2>
-        <button 
-          className={styles.addButtonBranch} 
-          onClick={handleAddBranch}
-          disabled={!selectedCompany}
-        >
-          Agregar Sucursal
-        </button>
-      </div>
-
-      {showModal && (
-        <BranchModal
-          onClose={handleModalClose}
-          onConfirm={handleModalConfirm}
-        />
-      )}
-    </>
+    // Barra de navegación
+    <AppBar position="static" className={styles.navbar}>
+      <Container maxWidth="xl">
+        <Toolbar disableGutters className={styles.toolbar}>
+          {/* Botón de regreso */}
+          <Button
+            onClick={handleBack}
+            className={styles.arrowButton}
+          >
+            <ArrowBackIcon />
+          </Button>
+          <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" }, justifyContent: "center" }}>
+            {/* Mostrar el nombre de la sucursal seleccionada */}
+            <Button className={styles.button}>
+              {selectedBranch ? selectedBranch.nombre : "Seleccione una sucursal"}
+            </Button>
+          </Box>
+        </Toolbar>
+      </Container>
+    </AppBar>
   );
 };
