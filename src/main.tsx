@@ -21,7 +21,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
     <BrowserRouter>
       {/* Envolvemos la aplicación en Provider y pasamos la tienda de Redux como prop */}
       <Provider store={store}>
-        <App /> {/* Renderizamos el componente principal de la aplicación */}
+          <App /> {/* Renderizamos el componente principal de la aplicación */}
       </Provider>
     </BrowserRouter>
   </React.StrictMode>

@@ -6,7 +6,7 @@ export abstract class BackendClient<T> extends AbstractBackendClient<T> {
   }
 
   async getAll(): Promise<T[]> {
-    const response = await fetch(`${this.baseUrl}/`);
+    const response = await fetch(`${this.baseUrl}`);
     const data = await response.json();
     return data as T[];
   }
@@ -21,7 +21,7 @@ export abstract class BackendClient<T> extends AbstractBackendClient<T> {
   }
 
   async post(data: T): Promise<T> {
-    const response = await fetch(`${this.baseUrl}/`, {
+    const response = await fetch(`${this.baseUrl}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -51,6 +51,21 @@ export abstract class BackendClient<T> extends AbstractBackendClient<T> {
     });
     if (!response.ok) {
       throw new Error(`Error al eliminar el elemento con ID ${id}`);
+    }
+  }
+
+  // Método para realizar una solicitud GET
+  protected async apiGet(endpoint: string): Promise<T[]> {
+    try {
+      const response = await fetch(`${this.baseUrl}${endpoint}`);
+      if (!response.ok) {
+        throw new Error(`Error al realizar la solicitud GET a ${endpoint}: ${response.statusText}`);
+      }
+      const data = await response.json();
+      return data as T[];
+    } catch (error) {
+      console.error("Error en apiGet:", error);
+      throw error; // Vuelve a lanzar el error para que pueda ser manejado en otro lugar
     }
   }
 }

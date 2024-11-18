@@ -1,7 +1,7 @@
 .navbars {
   height: 100px;
   width: 100vw;
-  background-color: var(--primary-color);
+  background-color: var(--primary-color) !important;
   display: flex;
   align-items: center;
   justify-content: center; /* Centra el contenido horizontalmente */
@@ -16,7 +16,7 @@
 
 .button {
   margin: 2rem 0;
-  color: white;
+  color: white !important;
   display: block;
   font-size: 1.2rem; /* Aumenta el tamaño del texto */
 }
@@ -28,10 +28,6 @@
   color: white; /* Asegura que el texto y los íconos sean blancos */
 }
 
-.arrowButton:hover {
-  background-color: white;
-  color: var(--primary-color);
-}
 
 .arrowButton svg {
   fill: white; /* Asegura que el ícono de la flecha sea blanco */

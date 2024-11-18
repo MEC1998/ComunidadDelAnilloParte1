@@ -1,4 +1,3 @@
-
 import { IImagen } from "../../IImagen";
 import { IAlergenos } from "../alergenos/IAlergenos";
 import { ICategorias } from "../categorias/ICategorias";
@@ -14,4 +13,5 @@ export interface IProductos {
   codigo: string;
   alergenos: IAlergenos[];
   imagenes: IImagen[];
+  [key: string]: unknown;
 }

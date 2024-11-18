@@ -32,9 +32,9 @@ export const NavBar = () => {
             <ArrowBackIcon />
           </Button>
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" }, justifyContent: "center" }}>
-            {/* Mostrar el nombre de la sucursal seleccionada */}
+            {/* Mostrar el ID de la sucursal seleccionada */}
             <Button className={styles.button}>
-              {selectedBranch ? selectedBranch.nombre : "Seleccione una sucursal"}
+              {selectedBranch ? `${selectedBranch.nombre} (ID: ${selectedBranch.id})` : "Seleccione una sucursal"}
             </Button>
           </Box>
         </Toolbar>

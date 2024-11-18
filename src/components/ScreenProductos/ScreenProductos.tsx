@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
+import { useParams } from "react-router-dom";
 
 import { ProductosService } from "../../services/dtos/ProductosService";
 import { IProductos } from "../../types/dtos/productos/IProductos";
 import { TableGeneric } from "../ui/TableGeneric/TableGeneric";
-import { useAppDispatch } from "../../hooks/redux";
+import { useAppDispatch, useAppSelector } from "../../hooks/redux";
 import { setDataTable } from "../../redux/slices/TablaReducer";
 import Swal from "sweetalert2";
 
@@ -17,11 +18,29 @@ import { ModalProducto } from "../ui/modals/ModalProductos/ModalProductos";
 const API_URL = import.meta.env.VITE_API_URL;
 
 export const ScreenProductos = () => {
+  const { idempresa, idsucursal } = useParams(); // Obtén los parámetros de la URL
+  const selectedBranch = useAppSelector((state) => state.selectedBranch.branch);
+  const selectedCompany = useAppSelector((state) => state.selectedCompany.company);
+
+  useEffect(() => {
+    if (selectedCompany && selectedBranch) {
+      // Aquí puedes cargar los datos de la empresa y la sucursal seleccionadas
+    }
+  }, [selectedCompany, selectedBranch]);
+
   // Estado para controlar la carga de datos
   const [loading, setLoading] = useState(false);
   const [openModal, setOpenModal] = useState(false);
 
-  const productosService = new ProductosService(API_URL + "/productos");
+  // Inicializar productosService sin usar API_URL como dependencia
+  const productosService = useMemo(() => new ProductosService(`${API_URL}/productos`), []);
+
+  // Obtener el ID de la sucursal seleccionada desde el estado de Redux
+  const idSucursalSeleccionada = useAppSelector((state) => {
+    const selectedBranch = state.selectedBranch.branch;
+    console.log("Sucursal seleccionada desde Redux:", selectedBranch);
+    return selectedBranch ? selectedBranch.id : null;
+  });
 
   //hook personalizado (redux)
   const dispatch = useAppDispatch();
@@ -60,19 +79,53 @@ export const ScreenProductos = () => {
       }
     });
   };
-  // Función para obtener los productos
-  const getProductos = async () => {
-    await productosService.getAll().then((productosData) => {
-      dispatch(setDataTable(productosData));
-      setLoading(false);
-    });
-  };
-
-  // Efecto para cargar los datos al inicio
-  useEffect(() => {
+  // Función para obtener los productos de la sucursal seleccionada
+  const getProductos = useCallback(async () => {
     setLoading(true);
-    getProductos();
-  }, []);
+    try {
+      if (!idSucursalSeleccionada) {
+        console.error("ID de sucursal no válido:", idSucursalSeleccionada);
+        return; // Salir si el ID no es válido
+      }
+      const response = await fetch(`http://190.221.207.224:8090/articulos/porSucursal/${idSucursalSeleccionada}`);
+      if (!response.ok) {
+        throw new Error('Error al obtener los productos');
+      }
+      const productosData = await response.json();
+      dispatch(setDataTable(productosData));
+    } catch (error) {
+      console.error("Error al obtener productos:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, [dispatch, idSucursalSeleccionada]);
+
+  // Efecto para cargar los datos al inicio y cuando cambien los parámetros de la URL
+  useEffect(() => {
+    console.log("Efecto de carga de productos, ID de sucursal:", idSucursalSeleccionada);
+    if (idSucursalSeleccionada) {
+      getProductos();
+    }
+  }, [getProductos, idSucursalSeleccionada, idempresa, idsucursal]); // Agrega idempresa y idsucursal como dependencias
+
+  // Nueva función para obtener la sucursal por empresa
+  const getSucursalPorEmpresa = useCallback(async () => {
+    if (idSucursalSeleccionada) {
+      try {
+        const response = await fetch(`/sucursales/porEmpresa/${idSucursalSeleccionada}`);
+        const data = await response.json();
+        // Aquí puedes manejar la data recibida, por ejemplo, guardarla en el estado
+        console.log(data); // {{ edit_1 }}
+      } catch (error) {
+        console.error("Error al obtener la sucursal:", error); // {{ edit_2 }}
+      }
+    }
+  }, [idSucursalSeleccionada]);
+
+  // Efecto para cargar la sucursal al seleccionar una
+  useEffect(() => {
+    getSucursalPorEmpresa(); // Llama a la función para obtener la sucursal
+  }, [idSucursalSeleccionada, getSucursalPorEmpresa]); // Agregar getSucursalPorEmpresa como dependencia
 
   return (
     <>

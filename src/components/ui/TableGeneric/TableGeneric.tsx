@@ -9,6 +9,7 @@ import TableRow from "@mui/material/TableRow";
 import { useEffect, useState } from "react";
 import { ButtonsTable } from "../ButtonsTable/ButtonsTable";
 import { useAppSelector } from "../../../hooks/redux";
+import { IProductos } from '../../../types/dtos/productos/IProductos'
 
 // Definimos la interfaz para cada columna de la tabla
 interface ITableColumn<T> {
@@ -23,7 +24,7 @@ export interface ITableProps<T> {
   setOpenModal: (state: boolean) => void;
 }
 
-export const TableGeneric = <T extends { id: any }>({
+export const TableGeneric = <T extends IProductos>({
   columns,
   handleDelete,
   setOpenModal,
@@ -45,10 +46,10 @@ export const TableGeneric = <T extends { id: any }>({
   };
 
   // Estado para almacenar las filas de la tabla
-  const [rows, setRows] = useState<any[]>([]);
+  const [rows, setRows] = useState<T[]>([]);
 
   // Obtener los datos de la tabla del estado global
-  const dataTable = useAppSelector((state) => state.tablaReducer.dataTable);
+  const dataTable = useAppSelector((state) => state.tablaReducer.dataTable as unknown as T[]);
 
   // Actualizar las filas cuando cambien los datos de la tabla
   useEffect(() => {
@@ -94,7 +95,7 @@ export const TableGeneric = <T extends { id: any }>({
                           <TableCell key={i} align={"center"}>
                             {
                               column.render ? ( // Si existe la función "render" se ejecuta
-                                column.render(row)
+                                column.render(row as T) // Aseguramos que 'row' es del tipo T
                               ) : column.label === "Acciones" ? ( // Si el label de la columna es "Acciones" se renderizan los botones de acción
                                 <ButtonsTable
                                   el={row}
@@ -102,7 +103,7 @@ export const TableGeneric = <T extends { id: any }>({
                                   setOpenModal={setOpenModal}
                                 />
                               ) : (
-                                row[column.key]
+                                row[column.key] as React.ReactNode // Aseguramos que el valor es del tipo ReactNode
                               ) // Si no hay una función personalizada, se renderiza el contenido de la celda tal cual
                             }
                           </TableCell>
