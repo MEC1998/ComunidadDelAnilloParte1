@@ -8,5 +8,5 @@ export interface ICategorias {
   sucursales: ISucursal[];
   subCategorias: ICategorias[];
   categoriaPadre?: ICategorias | null;
-  articulos: IProductos;
+  articulos: IProductos[];
 }

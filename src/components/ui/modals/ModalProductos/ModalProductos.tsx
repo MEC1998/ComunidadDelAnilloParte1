@@ -100,7 +100,13 @@ export const ModalProducto = ({
                 await apiProducto.put(elementActive.id, producto);
               } else {
                 const defaultCategoria: ICategorias = {
-                  // propiedades necesarias para un objeto ICategorias
+                  id: 0, // Asigna un ID por defecto
+                  denominacion: "Categoría por defecto", // Asigna una denominación por defecto
+                  eliminado: false, // Asigna un valor por defecto para eliminado
+                  sucursales: [], // Asigna un array vacío o el valor por defecto necesario
+                  subCategorias: [], // Añade un array vacío o el valor por defecto necesario
+                  articulos: [], // Añade un array vacío o el valor por defecto necesario
+                  // Añade otras propiedades necesarias con valores por defecto
                 };
                 const producto: IProductos = {
                   ...values,

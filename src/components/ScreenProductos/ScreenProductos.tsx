@@ -16,7 +16,7 @@ import { ModalProducto } from "../ui/modals/ModalProductos/ModalProductos";
 // Definición de la URL base de la API desde el archivo .env 
 const API_URL = import.meta.env.VITE_API_URL;
 
-export const ScreenSucursal = () => {
+export const ScreenProductos = () => {
   // Estado para controlar la carga de datos
   const [loading, setLoading] = useState(false);
   const [openModal, setOpenModal] = useState(false);
@@ -123,7 +123,7 @@ export const ScreenSucursal = () => {
 
       {/* Modal para agregar o editar un producto */}
       <ModalProducto
-        getPersonas={getProductos}
+        getProductos={getProductos}
         openModal={openModal}
         setOpenModal={setOpenModal}
       />
