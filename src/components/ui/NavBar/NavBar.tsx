@@ -3,38 +3,27 @@ import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import Container from "@mui/material/Container";
 import Button from "@mui/material/Button";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { useAppSelector } from "../../../hooks/redux";
 import styles from './NavBar.module.css';
-
-// Componente NavBar
 export const NavBar = () => {
-  // Hook de navegación de React Router
   const navigate = useNavigate();
-  const selectedBranch = useAppSelector((state) => state.selectedBranch.branch);
+  const { idempresa, idsucursal } = useParams();
 
-  // Función para regresar a la página anterior
   const handleBack = () => {
-    navigate(-1); // Navega a la página anterior
+    navigate(-1);
   };
 
   return (
-    // Barra de navegación
-    <AppBar position="static" className={styles.navbars}>
-      <Container maxWidth="xl">
-        <Toolbar disableGutters className={styles.toolbarr}>
-          {/* Botón de regreso */}
-          <Button
-            onClick={handleBack}
-            className={styles.arrowButton}
-          >
+    <AppBar position="static">
+      <Container maxWidth="xl" className={styles.navbars}>
+        <Toolbar disableGutters>
+          <Button onClick={handleBack}>
             <ArrowBackIcon />
           </Button>
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" }, justifyContent: "center" }}>
-            {/* Mostrar el ID de la sucursal seleccionada */}
-            <Button className={styles.button}>
-              {selectedBranch ? `${selectedBranch.nombre} (ID: ${selectedBranch.id})` : "Seleccione una sucursal"}
+            <Button>
+              {`Sucursal ID: ${idsucursal}, Empresa ID: ${idempresa}`}
             </Button>
           </Box>
         </Toolbar>

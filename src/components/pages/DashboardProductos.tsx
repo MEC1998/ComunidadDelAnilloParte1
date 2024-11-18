@@ -2,8 +2,11 @@ import { ScreenProductos } from "../ScreenProductos/ScreenProductos";
 import { NavBar } from "../ui/NavBar/NavBar";
 import { AdminSidebar } from "../ui/SideBar/AdminSidebar";
 import styles from './DashboardProductos.module.css';
+import { useParams } from "react-router-dom";
 
 export const DashboardProductos = () => {
+  const { idempresa, idsucursal } = useParams();
+
   return (
     <div className={styles.container}>
       <div className={styles.navbar}>
@@ -14,7 +17,7 @@ export const DashboardProductos = () => {
           <AdminSidebar />
         </div>
         <div className={styles.main}>
-          <ScreenProductos />
+          <ScreenProductos idempresa={idempresa} idsucursal={idsucursal} />
         </div>
       </div>
     </div>
