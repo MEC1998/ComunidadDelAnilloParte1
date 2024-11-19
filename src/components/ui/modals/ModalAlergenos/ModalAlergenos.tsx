@@ -6,7 +6,6 @@ import { useAppDispatch, useAppSelector } from "../../../../hooks/redux";
 import { removeElementActive } from "../../../../redux/slices/TablaReducer";
 import TextFieldValue from "../../TextFildValue/TextFildValue";
 import { ICreateAlergeno } from "../../../../types/dtos/alergenos/ICreateAlergeno";
-import { IUpdateAlergeno } from "../../../../types/dtos/alergenos/IUpdateAlergeno";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
