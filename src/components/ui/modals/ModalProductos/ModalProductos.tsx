@@ -129,31 +129,26 @@ export const ModalProducto = ({
                   <div className="container_Form_Ingredientes">
                     {/* Campos del formulario */}
                     <TextFieldValue
-                      label="Denominación:"
                       name="denominacion"
                       type="text"
                       placeholder="Denominación"
                     />
                     <TextFieldValue
-                      label="Precio de Venta:"
                       name="precioVenta"
                       type="number"
                       placeholder="Precio de Venta"
                     />
                     <TextFieldValue
-                      label="Descripción:"
                       name="descripcion"
                       type="text"
                       placeholder="Descripción"
                     />
                     <TextFieldValue
-                      label="Código:"
                       name="codigo"
                       type="text"
                       placeholder="Código"
                     />
                     <TextFieldValue
-                      label="ID Categoría:"
                       name="idCategoria"
                       type="number"
                       placeholder="ID Categoría"

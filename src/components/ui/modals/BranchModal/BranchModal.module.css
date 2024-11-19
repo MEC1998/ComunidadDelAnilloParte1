@@ -2,17 +2,11 @@
     display: flex;
     flex-direction: column;
     font-size: 0.85rem;
+    background-color: var(--modal-background-color);
+    gap: 1rem;
 }
 
-.formContent input,
-.formContent select {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid rgb(203, 203, 203) !important;
-
-}
-
-.section>h5 {
+.section > h5 {
     border-radius: 8px;
     color: #495057;
     font-size: 0.85rem;
@@ -33,30 +27,45 @@
     display: flex;
     justify-content: center;
     gap: 1rem;
+    margin-top: 1rem;
 }
 
-.buttons>button {
+.buttons > button {
     font-size: 0.85rem;
 }
 
-.buttons button[type="submit"] {
-    background-color: #4CAF50;
-    color: white;
-}
-
-.buttons button[type="button"] {
-    background-color: #dc3545;
-    color: white;
-}
-
-.formContent :global(.form-control) {
-    border: 1px solid black;
-    color: black;
-    padding: 4px 6px;
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 100%;
-    font-size: 1rem;
-    height: 32px;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
 }
+
+.modalContent {
+    background-color: var(--modal-background-color);
+    border-radius: 8px;
+    width: 95%;
+    max-width: 800px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.modalHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid #5A6B7A;
+}
+
+
 
 @media (max-width: 768px) {
     .row {
@@ -72,106 +81,40 @@
 .formGroup {
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
+    width: 100%;
 }
 
-.formGroup>label {
-    font-weight: 500;
-    margin-bottom: 0;
-    font-size: 0.85rem;
+.input-formulario {
+    width: 100%;
+    max-height: 150px;
+    overflow-y: auto;
+    background-color: var(--modal-background-color);
+    border-radius: 0;
+    border: 1.6px solid #5A6B7A;
+    padding: 12px;
 }
 
-.formGroup>select {
-    height: 32px;
-    font-size: 1rem;
+.input-formulario::placeholder {
+    color: #51606d;
 }
 
-.formContent :global(label) {
-    font-size: 0.85rem;
-    margin-bottom: 0.25rem;
+.error {
+    color: red;
 }
 
-.formContent :global(.modal-body) {
-    padding: 0.5rem;
-    font-size: 0.85rem;
+.labelContainer {
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    margin: 0.5rem;
 }
 
-.formContent :global(.modal-header) {
-    padding: 0.5rem;
+.cancelButton {
+    background-color: #f44336 !important;
+    color: white !important;
+    border: none !important;
 }
 
-.formContent :global(.modal-title) {
-    font-size: 0.85rem;
-}
-
-.formContent :global(.btn) {
-    font-size: 0.85rem;
-    padding: 0.25rem 0.5rem;
-}
-
-.formContent :global(.close) {
-    font-size: 0.85rem;
-}
-
-.formContent input[type="time"] {
-    font-size: 1rem;
-}
-
-.formContent select option {
-    font-size: 1rem;
-}
-
-:global(.modal-dialog.modal-lg) {
-    max-width: 700px;
-}
-
-:global(.modal-dialog.modal-md) {
-    max-width: 600px;
-}
-
-.requiredField::after,
-.formContent :global(label[required])::after {
-    content: " *";
-    color: #dc3545;
-    font-weight: bold;
-}
-
-.formContent :global(.form-control.error) {
-    border-color: #dc3545;
-}
-
-.formContent :global(.error-message) {
-    color: #dc3545;
-    font-size: 0.75rem;
-    margin-top: 0.25rem;
-}
-
-.formContent :global(.form-control)::placeholder,
-.formContent input::placeholder,
-.formContent select::placeholder {
-    font-size: 0.85rem;
-    color: #6c757d;
-}
-
-/* Para cubrir todos los navegadores */
-.formContent :global(.form-control)::-webkit-input-placeholder {
-    font-size: 0.85rem;
-    color: #6c757d;
-}
-
-.formContent :global(.form-control)::-moz-placeholder {
-    font-size: 0.85rem;
-    color: #6c757d;
-}
-
-.formContent :global(.form-control):-ms-input-placeholder {
-    font-size: 0.85rem;
-    color: #6c757d;
-}
-
-.formContent :global(.form-control),
-.formContent input,
-.formContent select,
-.formContent select option {
-    font-size: 0.85rem;
+.cancelButton:hover {
+    background-color: darkred  !important;
 }

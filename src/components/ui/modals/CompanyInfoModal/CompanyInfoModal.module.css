@@ -1,0 +1,31 @@
+.modalBody {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  background-color: var(--modal-background-color);
+  padding: 1rem;
+}
+
+.companyLogo {
+  max-width: 250px;
+  max-height: 250px;
+  object-fit: contain;
+  margin: 0 auto;
+  border: 2px solid #000;
+  border-radius: 8px;
+}
+
+.modalHeader, .modalFooter {
+  display: flex;
+  justify-content: center;
+  background-color: var(--modal-background-color) !important;
+  border-bottom: 1px solid #5A6B7A;
+}
+
+.modalFooter {
+  border-top: 1px solid #5A6B7A;
+}
+
+.modalTitle {
+  text-align: center;
+} 
