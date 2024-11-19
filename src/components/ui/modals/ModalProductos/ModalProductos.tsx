@@ -8,13 +8,13 @@ import { Form, Formik } from "formik";
 import { ProductosService } from "../../../../services/dtos/ProductosService";
 import { useAppDispatch, useAppSelector } from "../../../../hooks/redux";
 import { removeElementActive } from "../../../../redux/slices/TablaReducer";
-import { IProductos } from "../../../../types/dtos/productos/IProductos";
-import { ICategorias } from "../../../../types/dtos/categorias/ICategorias";
+
+import { IUpdateProducto } from "../../../../types/dtos/productos/IUpdateProducto";
 const API_URL = import.meta.env.VITE_API_URL;
 
 // Interfaz para los props del componente ModalProducto
 interface IModalProducto {
-  getProductos: Function; // Función para obtener los productos
+  getProductos: () => void; // Función para obtener los productos
   openModal: boolean;
   setOpenModal: (state: boolean) => void;
 }
@@ -25,23 +25,23 @@ export const ModalProducto = ({
   openModal,
   setOpenModal,
 }: IModalProducto) => {
-  // Valores iniciales para el formulario
-  const initialValues: ICreateProducto = {
-    denominacion: "",
-    precioVenta: 0,
-    descripcion: "",
-    habilitado: true,
-    codigo: "",
-    idCategoria: 0,
-    idAlergenos: [],
-    imagenes: [],
-  };
-
-  const apiProducto = new ProductosService(API_URL + "/productos");
-
   const elementActive = useAppSelector(
     (state) => state.tablaReducer.elementActive
   );
+  
+  // Valores iniciales para el formulario
+  const initialValues: ICreateProducto = {
+    denominacion: elementActive?.denominacion || "",
+    precioVenta: elementActive?.precioVenta || 0,
+    descripcion: elementActive?.descripcion || "",
+    habilitado: elementActive?.habilitado || true,
+    codigo: elementActive?.codigo || "",
+    idCategoria: elementActive?.categoria?.id || 0,
+    idAlergenos: elementActive?.alergenos?.map(a => a.id) || [],
+    imagenes: elementActive?.imagenes || [],
+  };
+
+  const apiProducto = new ProductosService(API_URL + "/productos");
   const dispatch = useAppDispatch();
 
   // Función para cerrar el modal
@@ -75,7 +75,7 @@ export const ModalProducto = ({
             validationSchema={Yup.object({
               denominacion: Yup.string().required("Campo requerido"),
               precioVenta: Yup.number().required("Campo requerido"),
-              descripcion: Yup.string().required("Campo requerido"),
+              descripcion: Yup.string().nullable(),
               habilitado: Yup.boolean().required("Campo requerido"),
               codigo: Yup.string().required("Campo requerido"),
               idCategoria: Yup.number().required("Campo requerido"),
@@ -88,38 +88,25 @@ export const ModalProducto = ({
             }}
             enableReinitialize={true}
             onSubmit={async (values: ICreateProducto) => {
-              // Enviar los datos al servidor al enviar el formulario
-              if (elementActive) {
-                const producto: IProductos = {
-                  ...values,
-                  id: elementActive.id,
-                  categoria: elementActive.categoria, // Asegúrate de que estas propiedades existan
-                  eliminado: elementActive.eliminado,
-                  alergenos: elementActive.alergenos,
-                };
-                await apiProducto.put(elementActive.id, producto);
-              } else {
-                const defaultCategoria: ICategorias = {
-                  id: 0, // Asigna un ID por defecto
-                  denominacion: "Categoría por defecto", // Asigna una denominación por defecto
-                  eliminado: false, // Asigna un valor por defecto para eliminado
-                  sucursales: [], // Asigna un array vacío o el valor por defecto necesario
-                  subCategorias: [], // Añade un array vacío o el valor por defecto necesario
-                  articulos: [], // Añade un array vacío o el valor por defecto necesario
-                  // Añade otras propiedades necesarias con valores por defecto
-                };
-                const producto: IProductos = {
-                  ...values,
-                  id: 0, // O el valor que corresponda para un nuevo producto
-                  categoria: defaultCategoria, // Asigna un valor por defecto válido
-                  eliminado: false, // O el valor por defecto
-                  alergenos: [],
-                };
-                await apiProducto.post(producto);
+              const producto: IUpdateProducto = {
+                id: elementActive ? elementActive.id : 0,
+                ...values,
+              };
+
+              try {
+                if (elementActive) {
+                  await apiProducto.updateProducto(elementActive.id, producto);
+                  console.log("Producto actualizado con éxito");
+                } else {
+                  await apiProducto.createProducto(producto);
+                  console.log("Producto creado con éxito");
+                }
+
+                getProductos();
+                handleClose();
+              } catch (error) {
+                console.error("Error al procesar la solicitud:", error);
               }
-              // Obtener los productos actualizados y cerrar el modal
-              getProductos();
-              handleClose();
             }}
           >
             {() => (

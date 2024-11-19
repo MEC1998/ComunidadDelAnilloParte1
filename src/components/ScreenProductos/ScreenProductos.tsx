@@ -75,11 +75,16 @@ export const ScreenProductos = () => {
       cancelButtonColor: "#d33",
       confirmButtonText: "Si, Eliminar!",
       cancelButtonText: "Cancelar",
-    }).then((result) => {
+    }).then(async (result) => {
       if (result.isConfirmed) {
-        productosService.delete(id).then(() => {
-          getProductos();
-        });
+        try {
+          await productosService.deleteProducto(id);
+          await getProductos();
+          Swal.fire("Eliminado!", "El producto ha sido eliminado.", "success");
+        } catch (error) {
+          console.error("Error al eliminar el producto:", error);
+          Swal.fire("Error!", "No se pudo eliminar el producto.", "error");
+        }
       }
     });
   };
