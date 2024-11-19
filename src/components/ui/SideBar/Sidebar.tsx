@@ -3,9 +3,11 @@ import { useAppDispatch } from '../../../hooks/hooks';
 import styles from "./Sidebar.module.css";
 import { IEmpresa } from "../../../types/dtos/empresa/IEmpresa";
 import { ICreateEmpresaDto } from "../../../types/dtos/empresa/ICreateEmpresaDto";
+import { IUpdateEmpresaDto } from "../../../types/dtos/empresa/IUpdateEmpresaDto";
 import { ModalCompanyForm } from "../modals/ModalCompanyForm/ModalCompanyForm";
 import { fetchEmpresaById } from "../../../redux/slices/selectedCompanySlice";
 import { EmpresaService } from "../../../services/dtos/EmpresaService";
+import { CompanyInfoModal } from "../modals/CompanyInfoModal/CompanyInfoModal";
 
 const empresaService = new EmpresaService();
 
@@ -17,7 +19,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ className }) => {
   const dispatch = useAppDispatch();
   const [companies, setCompanies] = useState<IEmpresa[]>([]);
   const [showForm, setShowForm] = useState(false);
-  const [editingCompany, setEditingCompany] = useState<ICreateEmpresaDto | null>(null);
+  const [editingCompany, setEditingCompany] = useState<IUpdateEmpresaDto | null>(null);
+  const [selectedCompany, setSelectedCompany] = useState<IEmpresa | null>(null);
+  const [showInfoModal, setShowInfoModal] = useState(false);
 
   const fetchCompanies = async () => {
     try {
@@ -55,13 +59,49 @@ export const Sidebar: React.FC<SidebarProps> = ({ className }) => {
     }
   };
 
-  const handleEditCompany = (company: IEmpresa) => {
-    setEditingCompany(company);
-    setShowForm(true);
+  const handleEditCompany = async (company: IUpdateEmpresaDto) => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/empresas/${company.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(company),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Error al editar la empresa: ${errorText}`);
+      }
+
+      const updatedCompany = await response.json();
+      setCompanies((prevCompanies) =>
+        prevCompanies.map((comp) => (comp.id === updatedCompany.id ? updatedCompany : comp))
+      );
+      setShowForm(false);
+    } catch (error) {
+      console.error('Error editing company:', error);
+    }
   };
 
   const handleSelectCompany = (id: number) => {
     dispatch(fetchEmpresaById(id));
+  };
+
+  const handleEditButtonClick = (company: IEmpresa) => {
+    setEditingCompany({
+      id: company.id,
+      nombre: company.nombre,
+      razonSocial: company.razonSocial,
+      cuit: company.cuit,
+      logo: company.logo,
+    });
+    setShowForm(true);
+  };
+
+  const handleInfoButtonClick = (company: IEmpresa) => {
+    setSelectedCompany(company);
+    setShowInfoModal(true);
   };
 
   return (
@@ -71,6 +111,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ className }) => {
       {showForm && (
         <ModalCompanyForm
           onAddCompany={handleAddCompany}
+          onEditCompany={handleEditCompany}
           onClose={() => {
             setShowForm(false);
             setEditingCompany(null);
@@ -91,14 +132,20 @@ export const Sidebar: React.FC<SidebarProps> = ({ className }) => {
               <span className={styles.sidebarItemTextDesc}>{company.razonSocial}</span>
             </div>
             <div className={styles.sidebarButtons}>
-              <button className={styles.sidebarItemButton}>
+              <button 
+                className={styles.sidebarItemButton}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleInfoButtonClick(company);
+                }}
+              >
                 <span className="material-symbols-outlined sidebarButton">info</span>
               </button>
               <button 
                 className={styles.sidebarItemButton}
                 onClick={(e) => {
                   e.stopPropagation();
-                  handleEditCompany(company);
+                  handleEditButtonClick(company);
                 }}
               >
                 <span className="material-symbols-outlined sidebarButton">edit</span>
@@ -107,6 +154,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ className }) => {
           </li>
         ))}
       </ul>
+      <CompanyInfoModal
+        show={showInfoModal}
+        onClose={() => setShowInfoModal(false)}
+        company={selectedCompany}
+      />
     </div>
   );
 };

@@ -1,3 +1,14 @@
+.input-formulario {
+  background-color: var(--modal-background-color);
+  border-radius: 0;
+  border: 1.6px solid #5A6B7A;
+  padding: 12px;
+}
+
+.input-formulario::placeholder {
+  color: #51606d;
+}
+
 .error {
   color: red;
 }
