@@ -1,6 +1,6 @@
 .sidebar {
   width: 350px; /* Asegúrate de que el ancho sea el mismo que el sidebar de empresas */
-  height: 100vh;
+  height: calc(100vh - 100px);
   background-color: var(--background-color-main-content);
   display: flex;
   flex-direction: column;

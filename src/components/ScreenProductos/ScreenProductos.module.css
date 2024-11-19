@@ -1,0 +1,34 @@
+.container {
+  height: calc(100vh - 100px);
+  padding: 1rem;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.buttonContainer {
+  padding: .4rem;
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  margin-bottom: 1rem;
+} 
+
+.tableContainer {
+  background-color: white;
+  flex: 1;
+  overflow: auto;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Estilos para hacer la tabla responsive */
+@media (max-width: 768px) {
+  .container {
+    padding: 0.5rem;
+  }
+  
+  .tableContainer {
+    font-size: 0.9rem;
+  }
+}

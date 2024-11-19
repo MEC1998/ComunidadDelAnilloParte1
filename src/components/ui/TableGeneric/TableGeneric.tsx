@@ -59,77 +59,97 @@ export const TableGeneric = <T extends { id: number }>({
   }, [dataTable]);
 
   return (
-    <div
-      style={{
-        width: "100%",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
+    <Paper 
+      sx={{ 
+        width: '100%',
+        height: '100%',
+        overflow: 'hidden',
+        backgroundColor: 'white',
+        borderRadius: '8px',
+        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
       }}
     >
-      {/* Contenedor del componente Paper */}
-      <Paper sx={{ width: "90%", overflow: "hidden" }}>
-        {/* Contenedor de la tabla */}
-        <TableContainer sx={{ maxHeight: "80vh" }}>
-          {/* Tabla */}
-          <Table stickyHeader aria-label="sticky table">
-            {/* Encabezado de la tabla */}
-            <TableHead>
-              <TableRow>
-                {columns.map((column, i: number) => (
-                  <TableCell key={i} align={"center"}>
-                    {column.label}
-                  </TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
-
-            {/* Cuerpo de la tabla */}
-            <TableBody>
-              {rows
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row, index: number) => {
-                  return (
-                    <TableRow hover role="checkbox" tabIndex={-1} key={index}>
-                      {/* Celdas de la fila */}
-                      {columns.map((column, i: number) => {
-                        return (
-                          <TableCell key={i} align={"center"}>
-                            {
-                              column.render ? ( // Si existe la función "render" se ejecuta
-                                column.render(row as T) // Aseguramos que 'row' es del tipo T
-                              ) : column.label === "Acciones" ? ( // Si el label de la columna es "Acciones" se renderizan los botones de acción
-                                <ButtonsTable
-                                  el={row}
-                                  handleDelete={handleDelete}
-                                  setOpenModal={setOpenModal}
-                                />
-                              ) : (
-                                row[column.key] as React.ReactNode // Aseguramos que el valor es del tipo ReactNode
-                              ) // Si no hay una función personalizada, se renderiza el contenido de la celda tal cual
-                            }
-                          </TableCell>
-                        );
-                      })}
-                    </TableRow>
-                  );
-                })}
-            </TableBody>
-
-            
-          </Table>
-        </TableContainer>
-        {/* Paginación de la tabla */}
-        <TablePagination
-          rowsPerPageOptions={[10, 25, 100]}
-          component="div"
-          count={rows.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
-      </Paper>
-    </div>
+      <TableContainer 
+        sx={{ 
+          maxHeight: 'calc(100vh - 250px)',
+          '@media (max-width: 768px)': {
+            maxHeight: 'calc(100vh - 200px)',
+          }
+        }}
+      >
+        <Table stickyHeader size="small">
+          <TableHead>
+            <TableRow>
+              {columns.map((column, i: number) => (
+                <TableCell 
+                  key={i} 
+                  align="center"
+                  sx={{
+                    backgroundColor: '#f5f5f5',
+                    fontWeight: 'bold',
+                    '@media (max-width: 768px)': {
+                      padding: '8px 4px',
+                      fontSize: '0.8rem'
+                    }
+                  }}
+                >
+                  {column.label}
+                </TableCell>
+              ))}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {rows
+              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              .map((row, index: number) => (
+                <TableRow hover key={index}>
+                  {columns.map((column, i: number) => (
+                    <TableCell 
+                      key={i} 
+                      align="center"
+                      sx={{
+                        '@media (max-width: 768px)': {
+                          padding: '8px 4px',
+                          fontSize: '0.8rem'
+                        }
+                      }}
+                    >
+                      {column.render
+                        ? column.render(row as T)
+                        : column.label === "Acciones"
+                        ? <ButtonsTable
+                            el={row}
+                            handleDelete={handleDelete}
+                            setOpenModal={setOpenModal}
+                          />
+                        : row[column.key] as React.ReactNode}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+      <TablePagination
+        rowsPerPageOptions={[10, 25, 100]}
+        component="div"
+        count={rows.length}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+        sx={{
+          position: 'sticky',
+          bottom: 0,
+          backgroundColor: 'white',
+          borderTop: '1px solid rgba(224, 224, 224, 1)',
+          '@media (max-width: 768px)': {
+            '.MuiTablePagination-selectLabel, .MuiTablePagination-displayedRows': {
+              fontSize: '0.8rem'
+            }
+          }
+        }}
+      />
+    </Paper>
   );
 };

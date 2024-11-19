@@ -1,6 +1,6 @@
 .navbars {
   height: 100px;
-  width: 100vw;
+  width: 100vw !important;
   background-color: var(--primary-color) !important;
   display: flex;
   align-items: center;

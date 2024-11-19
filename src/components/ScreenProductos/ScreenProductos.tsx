@@ -10,6 +10,7 @@ import Swal from "sweetalert2";
 
 import { Button, CircularProgress } from "@mui/material";
 import { ModalProducto } from "../ui/modals/ModalProductos/ModalProductos";
+import styles from './ScreenProductos.module.css';
 
 
  
@@ -88,8 +89,8 @@ export const ScreenProductos = () => {
 
   return (
     <>
-      <div>
-        <div style={{ padding: ".4rem", display: "flex", justifyContent: "flex-end", width: "90%" }}>
+      <div className={styles.container}>
+        <div className={styles.buttonContainer}>
           <Button onClick={() => setOpenModal(true)} variant="contained">
             Agregar
           </Button>
@@ -100,12 +101,15 @@ export const ScreenProductos = () => {
             <h2>Cargando...</h2>
           </div>
         ) : (
+          <div className={styles.tableContainer}>
           <TableGeneric<IProductos>
             data={productosData}
             handleDelete={handleDelete}
             columns={ColumnsTablePersona}
             setOpenModal={setOpenModal}
-          />
+            
+            />
+            </div>
         )}
       </div>
 
