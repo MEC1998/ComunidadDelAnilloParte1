@@ -22,12 +22,14 @@ export interface ITableProps<T> {
   columns: ITableColumn<T>[];
   handleDelete: (id: number) => void;
   setOpenModal: (state: boolean) => void;
+  data: T[];
 }
 
-export const TableGeneric = <T extends IProductos>({
+export const TableGeneric = <T extends { id: number }>({
   columns,
   handleDelete,
   setOpenModal,
+  data,
 }: ITableProps<T>) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);

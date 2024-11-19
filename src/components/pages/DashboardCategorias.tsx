@@ -17,7 +17,7 @@ export const DashboardCategorias = () => {
                     <AdminSidebar />
                 </div>
                 <div className={styles.main}>
-                    <ScreenCategorias idempresa={idempresa} idsucursal={idsucursal} />
+                    <ScreenCategorias _idempresa={idempresa} idsucursal={idsucursal} />
                 </div>
             </div>
         </div>

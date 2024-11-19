@@ -25,6 +25,13 @@ const persistedReducer = persistReducer(persistConfig, rootReducer);
 // Configuración de la tienda de Redux
 export const store = configureStore({
   reducer: persistedReducer,
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        // Ignorar acciones específicas de redux-persist
+        ignoredActions: ['persist/PERSIST', 'persist/REHYDRATE'],
+      },
+    }),
 });
 
 export const persistor = persistStore(store);

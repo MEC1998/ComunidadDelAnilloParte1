@@ -6,5 +6,5 @@ export interface IUpdateCategoria extends baseDto {
   eliminado: boolean;
   idEmpresa: number;
   idSucursales: number[];
-  idCategoriaPadre?: number | null;
+  idCategoriaPadre: number | null;
 }

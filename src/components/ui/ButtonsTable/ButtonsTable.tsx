@@ -1,26 +1,21 @@
 import { Button } from "@mui/material";
 import { useAppDispatch } from "../../../hooks/redux";
 import { setElementActive } from "../../../redux/slices/TablaReducer";
-import { IProductos } from "../../../types/dtos/productos/IProductos";
 
 // Interfaz para los props del componente
-interface IButtonsTable {
-  el: IProductos; // Elemento de tipo IProductos
-  handleDelete: (id: number) => void; // Función para manejar la eliminación de un elemento
-  setOpenModal: (state: boolean) => void; // Función para manejar la eliminación de un elemento
+interface ButtonsComponentProps<T> {
+  el: T;
+  handleDelete: (id: number) => void;
+  setOpenModal: (state: boolean) => void;
 }
 
-export const ButtonsTable = ({
-  el,
-  handleDelete,
-  setOpenModal,
-}: IButtonsTable) => {
+export const ButtonsTable = <T extends { id: number }>({ el, handleDelete, setOpenModal }: ButtonsComponentProps<T>) => {
   const dispatch = useAppDispatch();
 
   // Función para manejar la selección del modal para editar
   const handleModalSelected = () => {
     // Establecer el elemento activo en el estado
-    dispatch(setElementActive({ element: el }));
+    dispatch(setElementActive({ element: el as any }));
     // Mostrar el modal para editar el elemento
     setOpenModal(true);
   };

@@ -17,6 +17,14 @@ interface IModalCategoria {
     setOpenModal: (state: boolean) => void;
 }
 
+interface IElementActive {
+    id: number;
+    denominacion: string;
+    categoriaPadre?: {
+        id: number;
+    };
+}
+
 export const ModalCategoria = ({
     getCategorias,
     openModal,
@@ -25,7 +33,7 @@ export const ModalCategoria = ({
     const { idempresa } = useParams();
     const elementActive = useAppSelector(
         (state) => state.tablaReducer.elementActive
-    );
+    ) as IElementActive | null;
 
     const initialValues: ICreateCategoria = {
         denominacion: elementActive?.denominacion || "",
@@ -75,9 +83,9 @@ export const ModalCategoria = ({
                                 id: elementActive ? elementActive.id : 0,
                                 denominacion: values.denominacion,
                                 eliminado: false,
-                                idEmpresa: values.idEmpresa,
                                 idSucursales: [],
                                 idCategoriaPadre: values.idCategoriaPadre,
+                                idEmpresa: Number(idempresa),
                             };
 
                             try {

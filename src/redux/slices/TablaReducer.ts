@@ -1,11 +1,13 @@
 // Importaciones necesarias
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { IProductos } from "../../types/dtos/productos/IProductos";
+import { ICategorias } from "../../types/dtos/categorias/ICategorias";
+import { IAlergenos } from '../../types/dtos/alergenos/IAlergenos';
 
 // Definimos la interfaz para el estado inicial del slice
 interface IInitialState {
-  dataTable: IProductos[];
-  elementActive: null | IProductos;
+  dataTable: any[];
+  elementActive: null | any;
 }
 
 // Estado inicial del slice
@@ -25,7 +27,7 @@ const TablaReducer = createSlice({
   initialState,
   reducers: {
     // Reducer para establecer los datos de la tabla
-    setDataTable(state, action: PayloadAction<IProductos[]>) {
+    setDataTable(state, action: PayloadAction<any[]>) {
       state.dataTable = action.payload;
     },
     // Reducer para establecer el elemento activo
@@ -36,11 +38,15 @@ const TablaReducer = createSlice({
     removeElementActive(state) {
       state.elementActive = null;
     },
+    // Reducer para establecer los datos de la tabla de categorías
+    setCategoriasTable(state, action: PayloadAction<ICategorias[]>) {
+      state.dataTable = action.payload;
+    },
   },
 });
 
 // Exportamos los actions generados por el slice
-export const { setDataTable, setElementActive, removeElementActive } =
+export const { setDataTable, setElementActive, removeElementActive, setCategoriasTable } =
   TablaReducer.actions;
 
 // Exportamos el reducer generado por el slice

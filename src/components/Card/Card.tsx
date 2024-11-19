@@ -18,7 +18,7 @@ export const Card = ({ branchName, companyName, openingHours, image, branchData 
 
     const handleApartmentClick = () => {
         dispatch(setSelectedBranch(branchData));
-        navigate(`/${branchData.empresa.id}/${branchData.id}/productos`); // Cambia esto según la estructura de tu objeto
+        navigate(`/dashboard/${branchData.empresa.id}/${branchData.id}/productos`); // Cambia esto según la estructura de tu objeto
     };
 
     return (

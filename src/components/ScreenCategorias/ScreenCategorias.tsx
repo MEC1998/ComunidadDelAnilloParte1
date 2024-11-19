@@ -1,5 +1,4 @@
 import { useEffect, useState, useCallback, useMemo } from "react";
-import { useParams } from "react-router-dom";
 import { CategoriasService } from "../../services/dtos/CategoriasService";
 import { ICategorias } from "../../types/dtos/categorias/ICategorias";
 import { TableGeneric } from "../ui/TableGeneric/TableGeneric";
@@ -11,37 +10,38 @@ import { ModalCategoria } from "../ui/modals/ModalCategorias/ModalCategorias";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-export const ScreenCategorias = () => {
-    const { idempresa, idsucursal } = useParams();
+interface ScreenCategoriasProps {
+    _idempresa?: string;
+    idsucursal?: string;
+}
+
+export const ScreenCategorias: React.FC<ScreenCategoriasProps> = ({ _idempresa, idsucursal }) => {
     const dispatch = useAppDispatch();
+    console.log(_idempresa);
+    
     const [loading, setLoading] = useState(false);
     const [openModal, setOpenModal] = useState(false);
+    const [categorias, setCategorias] = useState<ICategorias[]>([]);
 
     const categoriasService = useMemo(() => new CategoriasService(`${API_URL}/categorias`), []);
 
-    const getCategorias = useCallback(async () => {
+    const fetchCategorias = useCallback(async () => {
         setLoading(true);
         try {
-            if (!idempresa) {
-                console.error("ID de empresa no válido:", idempresa);
-                return;
-            }
-            const response = await fetch(`http://190.221.207.224:8090/categorias/porEmpresa/${idempresa}`);
-            if (!response.ok) {
-                throw new Error('Error al obtener las categorías');
-            }
-            const categoriasData = await response.json();
-            dispatch(setDataTable(categoriasData));
+            const data = await categoriasService.getAllCategoriasPorSucursal(Number(idsucursal));
+            setCategorias(data);
+            dispatch(setDataTable(data));
         } catch (error) {
-            console.error("Error al obtener categorías:", error);
+            console.error("Error al cargar categorías:", error);
+            Swal.fire('Error', 'No se pudieron cargar las categorías', 'error');
         } finally {
             setLoading(false);
         }
-    }, [dispatch, idempresa]);
+    }, [idsucursal, dispatch, categoriasService]);
 
     useEffect(() => {
-        getCategorias();
-    }, [getCategorias]);
+        fetchCategorias();
+    }, [fetchCategorias]);
 
     const ColumnsTableCategoria = [
         {
@@ -67,7 +67,7 @@ export const ScreenCategorias = () => {
             if (result.isConfirmed) {
                 try {
                     await categoriasService.deleteCategoria(id);
-                    await getCategorias();
+                    await fetchCategorias();
                     Swal.fire("Eliminado!", "La categoría ha sido eliminada.", "success");
                 } catch (error) {
                     console.error("Error al eliminar la categoría:", error);
@@ -95,12 +95,13 @@ export const ScreenCategorias = () => {
                         handleDelete={handleDelete}
                         columns={ColumnsTableCategoria}
                         setOpenModal={setOpenModal}
+                        data={categorias}
                     />
                 )}
             </div>
 
             <ModalCategoria
-                getCategorias={getCategorias}
+                getCategorias={fetchCategorias}
                 openModal={openModal}
                 setOpenModal={setOpenModal}
             />

@@ -38,9 +38,6 @@ export abstract class BackendClient<T> extends AbstractBackendClient<T> {
       body: JSON.stringify(data),
       mode: "cors",
     });
-    if (!response.ok) {
-      throw new Error(`Error al crear el elemento: ${response.statusText}`);
-    }
     const newData = await response.json();
     return newData as T;
   }
@@ -52,15 +49,12 @@ export abstract class BackendClient<T> extends AbstractBackendClient<T> {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(data),
-      mode: "cors",
     });
-    if (!response.ok) {
-      throw new Error(`Error al actualizar el elemento con ID ${id}: ${response.statusText}`);
-    }
     const newData = await response.json();
     return newData as T;
   }
 
+  // Método para eliminar un elemento por su ID
   async delete(id: number): Promise<void> {
     const response = await fetch(`${this.baseUrl}/${id}`, {
       method: "DELETE",

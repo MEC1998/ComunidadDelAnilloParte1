@@ -1,72 +1,59 @@
 import { useEffect, useState, useCallback, useMemo } from "react";
 import { useParams } from "react-router-dom";
 
-import { ProductosService } from "../../services/dtos/ProductosService";
-import { IProductos } from "../../types/dtos/productos/IProductos";
+import { AlergenosService } from "../../services/dtos/AlergenosService";
+import { IAlergenos } from "../../types/dtos/alergenos/IAlergenos";
 import { TableGeneric } from "../ui/TableGeneric/TableGeneric";
 import { useAppDispatch } from "../../hooks/redux";
 import { setDataTable } from "../../redux/slices/TablaReducer";
 import Swal from "sweetalert2";
 
 import { Button, CircularProgress } from "@mui/material";
-import { ModalProducto } from "../ui/modals/ModalProductos/ModalProductos";
-
-
- 
+import { ModalAlergeno } from "../ui/modals/ModalAlergenos/ModalAlergenos";
 
 // Definición de la URL base de la API desde el archivo .env 
 const API_URL = import.meta.env.VITE_API_URL;
 
-export const ScreenProductos = () => {
-  const { idempresa, idsucursal } = useParams(); // Obtén los parámetros de la URL
+export const ScreenAlergenos = () => {
+  const { idempresa, idsucursal } = useParams();
   const dispatch = useAppDispatch();
   const [loading, setLoading] = useState(false);
   const [openModal, setOpenModal] = useState(false);
-  const [productosData, setProductosData] = useState<IProductos[]>([]);
+  const [alergenosData, setAlergenosData] = useState<IAlergenos[]>([]);
 
-  const productosService = useMemo(() => new ProductosService(`${API_URL}/productos`), []);
+  const alergenosService = useMemo(() => new AlergenosService(`${API_URL}/alergenos`), []);
 
-  // Función para obtener los productos de la sucursal seleccionada
-  const getProductos = useCallback(async () => {
+  const getAlergenos = useCallback(async () => {
     setLoading(true);
     try {
       if (!idsucursal) {
         console.error("ID de sucursal no válido:", idsucursal);
-        return; // Salir si el ID no es válido
+        return;
       }
-      const response = await fetch(`http://190.221.207.224:8090/articulos/porSucursal/${idsucursal}`);
+      const response = await fetch(`${API_URL}/alergenos`);
       if (!response.ok) {
-        throw new Error('Error al obtener los productos');
+        throw new Error('Error al obtener los alérgenos');
       }
       const data = await response.json();
-      setProductosData(data);
+      setAlergenosData(data);
       dispatch(setDataTable(data));
     } catch (error) {
-      console.error("Error al obtener productos:", error);
+      console.error("Error al obtener alérgenos:", error);
     } finally {
       setLoading(false);
     }
   }, [dispatch, idsucursal]);
 
-  // Efecto para cargar los datos al inicio y cuando cambien los parámetros de la URL
   useEffect(() => {
-    getProductos();
-  }, [getProductos, idsucursal, idempresa]); // Agrega idempresa e idsucursal como dependencias
+    getAlergenos();
+  }, [getAlergenos, idsucursal, idempresa]);
 
-  // Columnas de la tabla de productos
-  const ColumnsTablePersona = [
-    {
-      label: "id",
-      key: "id",
-      render: (producto: IProductos) => (producto?.id ? producto.id : 0),
-    },
-    { label: "Nombre", key: "denominacion" },
-    { label: "Precio", key: "precioVenta" },
-    { label: "Descripción", key: "descripcion" },
+  const ColumnsTableAlergenos = [
+    { label: "ID", key: "id" },
+    { label: "Denominación", key: "denominacion" },
     { label: "Acciones", key: "acciones" },
   ];
 
-  // Función para manejar el borrado de un producto
   const handleDelete = async (id: number) => {
     Swal.fire({
       title: "¿Estas seguro?",
@@ -79,8 +66,8 @@ export const ScreenProductos = () => {
       cancelButtonText: "Cancelar",
     }).then((result) => {
       if (result.isConfirmed) {
-        productosService.delete(id).then(() => {
-          getProductos();
+        alergenosService.delete(id).then(() => {
+          getAlergenos();
         });
       }
     });
@@ -100,20 +87,20 @@ export const ScreenProductos = () => {
             <h2>Cargando...</h2>
           </div>
         ) : (
-          <TableGeneric<IProductos>
-            data={productosData}
+          <TableGeneric<IAlergenos>
+            data={alergenosData}
             handleDelete={handleDelete}
-            columns={ColumnsTablePersona}
+            columns={ColumnsTableAlergenos}
             setOpenModal={setOpenModal}
           />
         )}
       </div>
 
-      <ModalProducto
-        getProductos={getProductos}
+      <ModalAlergeno
+        getAlergenos={getAlergenos}
         openModal={openModal}
         setOpenModal={setOpenModal}
       />
     </>
   );
-};
+}; 
