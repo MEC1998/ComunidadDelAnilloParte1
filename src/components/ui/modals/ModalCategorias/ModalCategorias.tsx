@@ -108,13 +108,11 @@ export const ModalCategoria = ({
                             <Form autoComplete="off" className="form-obraAlta">
                                 <div className="container_Form_Categorias">
                                     <TextFieldValue
-                                        label="Denominación:"
                                         name="denominacion"
                                         type="text"
                                         placeholder="Denominación"
                                     />
                                     <TextFieldValue
-                                        label="Categoría Padre (opcional):"
                                         name="idCategoriaPadre"
                                         type="number"
                                         placeholder="ID Categoría Padre"

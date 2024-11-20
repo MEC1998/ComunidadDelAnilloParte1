@@ -9,7 +9,6 @@ import TableRow from "@mui/material/TableRow";
 import { useEffect, useState } from "react";
 import { ButtonsTable } from "../ButtonsTable/ButtonsTable";
 import { useAppSelector } from "../../../hooks/redux";
-import { IProductos } from '../../../types/dtos/productos/IProductos'
 
 // Definimos la interfaz para cada columna de la tabla
 interface ITableColumn<T> {
@@ -25,11 +24,10 @@ export interface ITableProps<T> {
   data: T[];
 }
 
-export const TableGeneric = <T extends { id: number }>({
+export const TableGeneric = <T extends { id: number; [key: string]: any }>({
   columns,
   handleDelete,
   setOpenModal,
-  data,
 }: ITableProps<T>) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);

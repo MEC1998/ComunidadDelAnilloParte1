@@ -2,7 +2,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { IProductos } from "../../types/dtos/productos/IProductos";
 import { ICategorias } from "../../types/dtos/categorias/ICategorias";
-import { IAlergenos } from '../../types/dtos/alergenos/IAlergenos';
 
 // Definimos la interfaz para el estado inicial del slice
 interface IInitialState {

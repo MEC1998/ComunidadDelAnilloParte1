@@ -83,7 +83,6 @@ export const ModalAlergeno = ({
                             <Form autoComplete="off">
                                 <div className="container_Form">
                                     <TextFieldValue
-                                        label="Denominación:"
                                         name="denominacion"
                                         type="text"
                                         placeholder="Denominación"

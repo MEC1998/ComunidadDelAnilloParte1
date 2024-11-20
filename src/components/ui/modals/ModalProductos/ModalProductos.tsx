@@ -37,7 +37,7 @@ export const ModalProducto = ({
     habilitado: elementActive?.habilitado || true,
     codigo: elementActive?.codigo || "",
     idCategoria: elementActive?.categoria?.id || 0,
-    idAlergenos: elementActive?.alergenos?.map(a => a.id) || [],
+    idAlergenos: elementActive?.alergenos?.map((a: { id: number }) => a.id) || [],
     imagenes: elementActive?.imagenes || [],
   };
 
