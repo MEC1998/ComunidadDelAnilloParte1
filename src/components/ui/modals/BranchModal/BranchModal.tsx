@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "react-bootstrap";
-import { Formik, Form } from "formik";
+import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 import styles from "./BranchModal.module.css";
 import { IPais } from "../../../../types/IPais";
@@ -82,6 +82,7 @@ const BranchModal: React.FC<BranchModalProps> = ({ onClose, onConfirm }) => {
                             calle: Yup.string().required("Campo requerido"),
                             numero: Yup.string().required("Campo requerido"),
                             cp: Yup.string().required("Campo requerido"),
+                            logo: Yup.string().url("Debe ser una URL válida"),
                         })}
                         onSubmit={(values) => {
                             const submissionData: Partial<ISucursal> = {
@@ -114,7 +115,7 @@ const BranchModal: React.FC<BranchModalProps> = ({ onClose, onConfirm }) => {
                                 empresa: {
                                     id: 0
                                 } as IEmpresa,
-                                logo: values.logo ? URL.createObjectURL(values.logo) || undefined : undefined
+                                logo: values.logo instanceof File ? URL.createObjectURL(values.logo) : values.logo || undefined
                             };
                             onConfirm(submissionData);
                             onClose();
@@ -221,6 +222,21 @@ const BranchModal: React.FC<BranchModalProps> = ({ onClose, onConfirm }) => {
                                         </div>
                                         <div className={styles.col}>
                                             <TextFieldValue  name="longitud" type="text" placeholder="Longitud" />
+                                        </div>
+                                    </div>
+
+                                    {/* Campo esCasaMatriz y logo */}
+                                    <div className={styles.row}>
+                                        <div className={styles.col}>
+                                            <div className={styles.formGroup}>
+                                                <label>
+                                                    <Field type="checkbox" name="esCasaMatriz" />
+                                                    Es Casa Matriz
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div className={styles.col}>
+                                            <TextFieldValue name="logo" type="text" placeholder="URL del logo" />
                                         </div>
                                     </div>
                                 </div>
