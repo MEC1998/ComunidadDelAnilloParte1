@@ -5,12 +5,12 @@ import * as Yup from "yup";
 import styles from "./BranchModal.module.css";
 import { IPais } from "../../../../types/IPais";
 import { ISucursal } from "../../../../types/dtos/sucursal/ISucursal";
-import { IEmpresa } from "../../../../types/dtos/empresa/IEmpresa";
 import TextFieldValue from "../../TextFildValue/TextFildValue";
 
 interface BranchModalProps {
     onClose: () => void;
     onConfirm: (data: Partial<ISucursal>) => Promise<void>;
+    initialData?: ISucursal;
 }
 
 interface RestCountriesResponse {
@@ -38,24 +38,23 @@ const fetchPaises = async (): Promise<IPais[]> => {
         .sort((a: IPais, b: IPais) => a.nombre.localeCompare(b.nombre));
 };
 
-const BranchModal: React.FC<BranchModalProps> = ({ onClose, onConfirm }) => {
+const BranchModal: React.FC<BranchModalProps> = ({ onClose, onConfirm, initialData }) => {
     const initialValues = {
-        nombre: "",
-        horarioApertura: "",
-        horarioCierre: "",
-        paisId: "ARG",
-        provincia: "",
-        localidad: "",
-        latitud: "",
-        longitud: "",
-        calle: "",
-        numero: "",
-        cp: "",
-        piso: "",
-        nroDpto: "",
-        esCasaMatriz: false,
-        eliminado: false,
-        logo: null as File | null,
+        nombre: initialData?.nombre || "",
+        horarioApertura: initialData?.horarioApertura || "",
+        horarioCierre: initialData?.horarioCierre || "",
+        paisId: initialData?.domicilio.localidad.provincia.pais.id.toString() || "ARG",
+        provincia: initialData?.domicilio.localidad.provincia.nombre || "",
+        localidad: initialData?.domicilio.localidad.nombre || "",
+        latitud: initialData?.latitud.toString() || "",
+        longitud: initialData?.longitud.toString() || "",
+        calle: initialData?.domicilio.calle || "",
+        numero: initialData?.domicilio.numero.toString() || "",
+        cp: initialData?.domicilio.cp.toString() || "",
+        piso: initialData?.domicilio.piso.toString() || "",
+        nroDpto: initialData?.domicilio.nroDpto.toString() || "",
+        esCasaMatriz: initialData?.esCasaMatriz || false,
+        logo: initialData?.logo || null,
     };
 
     const { data: paises = [], isLoading: paisesLoading, error: paisesError } = useQuery<IPais[]>({
@@ -67,7 +66,7 @@ const BranchModal: React.FC<BranchModalProps> = ({ onClose, onConfirm }) => {
         <div className={styles.modalOverlay}>
             <div className={styles.modalContent}>
                 <div className={styles.modalHeader}>
-                    <h5>Agregar sucursal</h5>
+                    <h5>{initialData ? `Editar ${initialData.nombre}` : "Agregar sucursal"}</h5>
                 </div>
                 <div className={styles.modalBody}>
                     <Formik
@@ -86,6 +85,7 @@ const BranchModal: React.FC<BranchModalProps> = ({ onClose, onConfirm }) => {
                         })}
                         onSubmit={(values) => {
                             const submissionData: Partial<ISucursal> = {
+                                ...initialData,
                                 nombre: values.nombre,
                                 horarioApertura: values.horarioApertura,
                                 horarioCierre: values.horarioCierre,
@@ -93,29 +93,30 @@ const BranchModal: React.FC<BranchModalProps> = ({ onClose, onConfirm }) => {
                                 latitud: values.latitud ? parseFloat(values.latitud) : 0,
                                 longitud: values.longitud ? parseFloat(values.longitud) : 0,
                                 domicilio: {
-                                    id: 0,
+                                    ...initialData?.domicilio,
+                                    id: initialData?.domicilio.id || 0,
                                     calle: values.calle,
                                     numero: parseInt(values.numero),
                                     cp: parseInt(values.cp),
                                     piso: parseInt(values.piso),
                                     nroDpto: parseInt(values.nroDpto),
                                     localidad: {
-                                        id: 0,
+                                        ...initialData?.domicilio.localidad,
+                                        id: initialData?.domicilio.localidad.id || 0,
                                         nombre: values.localidad,
                                         provincia: {
-                                            id: 0,
+                                            ...initialData?.domicilio.localidad.provincia,
+                                            id: initialData?.domicilio.localidad.provincia.id || 0,
                                             nombre: values.provincia,
                                             pais: {
-                                                id: parseInt(values.paisId),
+                                                ...initialData?.domicilio.localidad.provincia.pais,
+                                                id: parseInt(values.paisId) || 0,
                                                 nombre: paises.find(p => p.id === parseInt(values.paisId))?.nombre || 'Argentina'
                                             }
                                         }
                                     },
                                 },
-                                empresa: {
-                                    id: 0
-                                } as IEmpresa,
-                                logo: values.logo instanceof File ? URL.createObjectURL(values.logo) : values.logo || undefined
+                                logo: typeof values.logo === 'string' ? values.logo : undefined
                             };
                             onConfirm(submissionData);
                             onClose();
@@ -243,7 +244,7 @@ const BranchModal: React.FC<BranchModalProps> = ({ onClose, onConfirm }) => {
 
                                 <div className={styles.buttons}>
                                     <Button variant="success" type="submit">
-                                        Confirmar
+                                        {initialData ? "Guardar cambios" : "Confirmar"}
                                     </Button>
                                     <Button className={styles.cancelButton} onClick={onClose}>
                                         Cancelar

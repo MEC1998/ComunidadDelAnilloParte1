@@ -1,4 +1,5 @@
 import { ISucursal } from "../../types/dtos/sucursal/ISucursal";
+import { IUpdateSucursal } from "../../types/dtos/sucursal/IUpdateSucursal";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -34,6 +35,23 @@ export class SucursalService {
     if (!response.ok) {
       const errorData = await response.json().catch(() => null);
       throw new Error(errorData?.message || 'Error al crear la sucursal');
+    }
+
+    return response.json();
+  }
+
+  async updateSucursal(id: number, sucursal: IUpdateSucursal): Promise<IUpdateSucursal> {
+    const response = await fetch(`${this.baseUrl}/update/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(sucursal),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => null);
+      throw new Error(errorData?.message || 'Error al actualizar la sucursal');
     }
 
     return response.json();
