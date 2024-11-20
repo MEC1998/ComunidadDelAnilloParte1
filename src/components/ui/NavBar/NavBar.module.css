@@ -1,5 +1,5 @@
 .navbars {
-  height: 100px;
+  height: 4rem !important;
   width: 100vw !important;
   background-color: var(--primary-color) !important;
   display: flex;

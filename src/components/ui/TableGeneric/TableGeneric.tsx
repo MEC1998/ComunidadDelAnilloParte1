@@ -8,8 +8,6 @@ import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import { useEffect, useState } from "react";
 import { ButtonsTable } from "../ButtonsTable/ButtonsTable";
-import { useAppSelector } from "../../../hooks/redux";
-import { IProductos } from '../../../types/dtos/productos/IProductos'
 
 // Definimos la interfaz para cada columna de la tabla
 interface ITableColumn<T> {
@@ -18,14 +16,14 @@ interface ITableColumn<T> {
   render?: (item: T) => React.ReactNode;
 }
 
-export interface ITableProps<T> {
+export interface ITableProps<T extends Record<string, unknown>> {
   columns: ITableColumn<T>[];
   handleDelete: (id: number) => void;
   setOpenModal: (state: boolean) => void;
   data: T[];
 }
 
-export const TableGeneric = <T extends { id: number }>({
+export const TableGeneric = <T extends { id: number } & Record<string, unknown>>({
   columns,
   handleDelete,
   setOpenModal,
@@ -51,12 +49,11 @@ export const TableGeneric = <T extends { id: number }>({
   const [rows, setRows] = useState<T[]>([]);
 
   // Obtener los datos de la tabla del estado global
-  const dataTable = useAppSelector((state) => state.tablaReducer.dataTable as unknown as T[]);
 
   // Actualizar las filas cuando cambien los datos de la tabla
   useEffect(() => {
-    setRows(dataTable);
-  }, [dataTable]);
+    setRows(data);
+  }, [data]);
 
   return (
     <Paper 
