@@ -15,8 +15,8 @@ export const NavBar = () => {
   };
 
   return (
-    <AppBar position="static">
-      <Container maxWidth="xl" className={styles.navbars}>
+    <AppBar position="static" className={styles.navbars}>
+      <Container maxWidth="xl" >
         <Toolbar disableGutters>
           <Button onClick={handleBack}>
             <ArrowBackIcon />

@@ -6,6 +6,7 @@
 .content {
   display: flex;
   flex: 1;
+  background-color: red;
 }
 .main {
   flex: 1;
