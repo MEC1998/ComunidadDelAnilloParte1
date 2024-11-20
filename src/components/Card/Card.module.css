@@ -1,71 +1,64 @@
 /* card */
 .card {
     width: 100%;
-    max-width: 18rem;
-    height: 22rem;
+    max-width: 16rem;
+    height: 20rem;
     background-color: var(--secondary-color);
-    padding: 1.5rem 1.5rem 0 1.5rem;
+    padding: 1rem 1rem 0 1rem;
     display: flex;
     flex-direction: column;
     align-items: center;
-    border-radius: 0.5rem;
-    box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.6);
+    border-radius: 0.4rem;
+    box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.05);
   }
   .cardTitle {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.2rem;
-    font-weight: 600;
     text-align: center;
-    max-width: 100%;
-    height: auto;
+    font-size: 1rem;
+    font-weight: 600;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: normal;
     word-wrap: break-word;
+    line-height: 0.97;
+    height: 2rem;
   }
   
   .cardDescription {
     display: flex;
-    align-items: center;
-    justify-content: center;  
-    font-size: 1rem;
-    margin-bottom: -0.5rem;
-    height: 2rem;
+    font-size: .9rem;
+    height: 1rem;
   }
   .cardTime {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 2rem;
     font-size: 0.9rem;
     text-align: center;
+    height: 1rem;
+  }
+  .cardImgContainer {
+    height: 10rem;
+    width: 100%;
   }
   .cardImg {
+    padding-top: 1rem;
     display: flex;
-    align-items: center;
-    justify-content: center;  
-    height: 11rem;
+    height: 100%;
     width: 100%;
     object-fit: cover;
-    border-radius: 0.4rem;
   }
   .cardButtons {
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 3.5rem;
+    height: 4rem;
+    gap: 1rem;
   }
   .cardButton {
     display: flex;
     align-items: center;
     justify-content: center;
     border: none;
-    margin: 0 1.5rem;
-    padding: 0.3rem;
     border-radius: 50%;
     background-color: var(--secondary-color);
+    padding: .8rem;
   }
   .cardButton:hover {
     background-color: var(--primary-color);

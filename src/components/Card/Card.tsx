@@ -9,11 +9,11 @@ import BranchModal from "../ui/modals/BranchModal/BranchModal";
 import { SucursalService } from "../../services/dtos/SucursalService";
 
 interface CardProps {
-  branchName: string;
-  companyName: string;
-  openingHours: string;
-  image: string | null;
-  branchData: ISucursal;
+    branchName: string;
+    companyName: string;
+    openingHours: string;
+    image: string | null;
+    branchData: ISucursal;
 }
 
 const sucursalService = new SucursalService();
@@ -75,7 +75,10 @@ export const Card = ({ branchName, companyName, openingHours, image, branchData 
             <div className={styles.cardTitle}>{branchName}</div>
             <p className={styles.cardDescription}>{companyName}</p>
             <span className={styles.cardTime}>{openingHours}</span>
-            {image && <img className={styles.cardImg} src={image} alt={branchName} />}
+            <div className={styles.cardImgContainer}>
+                {image && <img className={styles.cardImg} src={image} alt={branchName} />}
+
+            </div>
 
             <div className={styles.cardButtons}>
                 <button className={styles.cardButton} onClick={handleApartmentClick}>
