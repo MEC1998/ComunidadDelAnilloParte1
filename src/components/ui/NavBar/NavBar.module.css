@@ -4,13 +4,13 @@
   background-color: var(--primary-color) !important;
   display: flex;
   align-items: center;
-  justify-content: center; /* Centra el contenido horizontalmente */
+  justify-content: center;
 }
 
 .toolbarr {
   width: 100%;
   display: flex;
-  justify-content: space-between; /* Espacia los elementos */
+  justify-content: space-between;
   align-items: center;
 }
 
@@ -18,17 +18,48 @@
   margin: 2rem 0;
   color: white !important;
   display: block;
-  font-size: 1.2rem; /* Aumenta el tamaño del texto */
+  font-size: 1.2rem;
 }
 
 .arrowButton {
-  border: 2px solid white;
-  border-radius: 4px;
-  transition: background-color 0.3s, color 0.3s;
-  color: white; /* Asegura que el texto y los íconos sean blancos */
+  background-color: var(--secondary-color) !important;
+  border-radius: 50% !important;
+  padding: 0.5rem !important;
+  min-width: unset !important;
 }
 
-
 .arrowButton svg {
-  fill: white; /* Asegura que el ícono de la flecha sea blanco */
+  fill: var(--primary-color) !important;
+}
+
+.arrowButton:hover {
+  background-color: var(--primary-color) !important;
+  outline: 2px solid var(--secondary-color) !important;
+}
+
+.arrowButton:hover svg {
+  fill: var(--secondary-color) !important;
+}
+
+.addButton {
+  background-color: var(--secondary-color) !important;
+  color: var(--primary-color) !important;
+  margin-left: 1rem !important;
+}
+
+.addButton:hover {
+  background-color: var(--primary-color) !important;
+  color: var(--secondary-color) !important;
+  outline: 2px solid var(--secondary-color) !important;
 } 
+
+.title {
+  font-size: 1rem;
+  position: absolute;
+  text-align: center;
+  top: 50%;
+  transform: translateY(-50%);
+  height: auto;
+  line-height: 1.5;
+  white-space: pre-line;
+}

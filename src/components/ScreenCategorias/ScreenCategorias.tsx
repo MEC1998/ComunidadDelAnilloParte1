@@ -5,22 +5,29 @@ import { TableGeneric } from "../ui/TableGeneric/TableGeneric";
 import { useAppDispatch } from "../../hooks/redux";
 import { setDataTable } from "../../redux/slices/TablaReducer";
 import Swal from "sweetalert2";
-import { Button, CircularProgress } from "@mui/material";
+import { CircularProgress } from "@mui/material";
 import { ModalCategoria } from "../ui/modals/ModalCategorias/ModalCategorias";
+import styles from './ScreenCategorias.module.css';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
 interface ScreenCategoriasProps {
     _idempresa?: string;
     idsucursal?: string;
+    openModal: boolean;
+    setOpenModal: (state: boolean) => void;
 }
 
-export const ScreenCategorias: React.FC<ScreenCategoriasProps> = ({ _idempresa, idsucursal }) => {
+export const ScreenCategorias: React.FC<ScreenCategoriasProps> = ({ 
+    _idempresa, 
+    idsucursal,
+    openModal,
+    setOpenModal 
+}) => {
     const dispatch = useAppDispatch();
     console.log(_idempresa);
     
     const [loading, setLoading] = useState(false);
-    const [openModal, setOpenModal] = useState(false);
     const [categorias, setCategorias] = useState<ICategorias[]>([]);
 
     const categoriasService = useMemo(() => new CategoriasService(`${API_URL}/categorias`), []);
@@ -80,23 +87,21 @@ export const ScreenCategorias: React.FC<ScreenCategoriasProps> = ({ _idempresa, 
     return (
         <>
             <div>
-                <div style={{ padding: ".4rem", display: "flex", justifyContent: "flex-end", width: "90%" }}>
-                    <Button onClick={() => setOpenModal(true)} variant="contained">
-                        Agregar Categoría
-                    </Button>
-                </div>
                 {loading ? (
                     <div style={{ display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column", width: "100%", gap: "2vh", height: "100%" }}>
                         <CircularProgress color="secondary" />
                         <h2>Cargando...</h2>
                     </div>
                 ) : (
-                    <TableGeneric<ICategorias>
-                        handleDelete={handleDelete}
+                    <div>
+                        <h3 className={styles.title}>Categorías</h3>
+                        <TableGeneric<ICategorias>
+                            handleDelete={handleDelete}
                         columns={ColumnsTableCategoria}
                         setOpenModal={setOpenModal}
-                        data={categorias}
-                    />
+                            data={categorias}
+                        />
+                    </div>
                 )}
             </div>
 

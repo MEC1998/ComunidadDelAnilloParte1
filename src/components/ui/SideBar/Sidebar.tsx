@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useAppDispatch } from '../../../hooks/hooks';
+import { useAppDispatch, useAppSelector } from '../../../hooks/hooks';
 import styles from "./Sidebar.module.css";
 import { IEmpresa } from "../../../types/dtos/empresa/IEmpresa";
 import { ICreateEmpresaDto } from "../../../types/dtos/empresa/ICreateEmpresaDto";
@@ -17,6 +17,7 @@ interface SidebarProps {
 
 export const Sidebar: React.FC<SidebarProps> = ({ className }) => {
   const dispatch = useAppDispatch();
+  const selectedCompanyId = useAppSelector(state => state.selectedCompany.selectedCompanyId);
   const [companies, setCompanies] = useState<IEmpresa[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [editingCompany, setEditingCompany] = useState<IUpdateEmpresaDto | null>(null);
@@ -124,7 +125,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ className }) => {
         {companies.map((company) => (
           <li
             key={company.id}
-            className={styles.sidebarItem}
+            className={`${styles.sidebarItem} ${selectedCompanyId === company.id ? styles.active : ''}`}
             onClick={() => handleSelectCompany(company.id)}
           >
             <div className={styles.sidebarItemText}>

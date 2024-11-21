@@ -1,5 +1,4 @@
 import { useEffect, useState, useCallback, useMemo } from "react";
-import { useParams } from "react-router-dom";
 
 import { ProductosService } from "../../services/dtos/ProductosService";
 import { IProductos } from "../../types/dtos/productos/IProductos";
@@ -7,21 +6,27 @@ import { TableGeneric } from "../ui/TableGeneric/TableGeneric";
 import { useAppDispatch } from "../../hooks/redux";
 import { setDataTable } from "../../redux/slices/TablaReducer";
 import Swal from "sweetalert2";
-
-import { Button, CircularProgress } from "@mui/material";
+import { CircularProgress } from "@mui/material";
 import { ModalProducto } from "../ui/modals/ModalProductos/ModalProductos";
-
-
- 
+import styles from './ScreenProductos.module.css';
+interface ScreenProductosProps {
+  idempresa?: string;
+  idsucursal?: string;
+  openModal: boolean;
+  setOpenModal: (open: boolean) => void;
+}
 
 // Definición de la URL base de la API desde el archivo .env 
 const API_URL = import.meta.env.VITE_API_URL;
 
-export const ScreenProductos = () => {
-  const { idempresa, idsucursal } = useParams(); // Obtén los parámetros de la URL
+export const ScreenProductos: React.FC<ScreenProductosProps> = ({ 
+  idempresa, 
+  idsucursal, 
+  openModal, 
+  setOpenModal 
+}) => {
   const dispatch = useAppDispatch();
   const [loading, setLoading] = useState(false);
-  const [openModal, setOpenModal] = useState(false);
   const [productosData, setProductosData] = useState<IProductos[]>([]);
 
   const productosService = useMemo(() => new ProductosService(`${API_URL}/productos`), []);
@@ -89,23 +94,21 @@ export const ScreenProductos = () => {
   return (
     <>
       <div>
-        <div style={{ padding: ".4rem", display: "flex", justifyContent: "flex-end", width: "90%" }}>
-          <Button onClick={() => setOpenModal(true)} variant="contained">
-            Agregar
-          </Button>
-        </div>
         {loading ? (
           <div style={{ display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column", width: "100%", gap: "2vh", height: "100%" }}>
             <CircularProgress color="secondary" />
             <h2>Cargando...</h2>
           </div>
         ) : (
+          <div>
+          <h3 className={styles.title}>Productos</h3>
           <TableGeneric<IProductos>
             data={productosData}
             handleDelete={handleDelete}
             columns={ColumnsTablePersona}
             setOpenModal={setOpenModal}
-          />
+            />
+            </div>
         )}
       </div>
 

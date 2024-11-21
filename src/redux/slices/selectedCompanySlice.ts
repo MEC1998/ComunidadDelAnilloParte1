@@ -26,12 +26,14 @@ interface SelectedCompanyState {
   company: IEmpresa | null;
   loading: boolean;
   error: string | null;
+  selectedCompanyId: number | null;
 }
 
 const initialState: SelectedCompanyState = {
   company: null,
   loading: false,
   error: null,
+  selectedCompanyId: null,
 };
 
 // Creación del slice
@@ -42,6 +44,7 @@ const selectedCompanySlice = createSlice({
     clearSelectedCompany(state) {
       state.company = null;
       state.error = null;
+      state.selectedCompanyId = null;
     },
   },
   extraReducers: (builder) => {
@@ -53,10 +56,12 @@ const selectedCompanySlice = createSlice({
       .addCase(fetchEmpresaById.fulfilled, (state, action: PayloadAction<IEmpresa>) => {
         state.loading = false;
         state.company = action.payload;
+        state.selectedCompanyId = action.payload.id;
       })
       .addCase(fetchEmpresaById.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
+        state.selectedCompanyId = null;
       });
   },
 });

@@ -3,7 +3,6 @@
   background-color: var(--primary-color);
   display: flex;
   flex-direction: column;
-  gap: 10px;
   color: #ffffff;
   overflow: hidden;
 }
@@ -52,11 +51,19 @@
   display: flex;
   justify-content: space-between;
   transition: background-color 0.3s, color 0.3s;
+  cursor: pointer;
 }
 
-.sidebarItem:hover {
+.sidebarItem:hover,
+.sidebarItem.active {
   background-color: var(--secondary-color);
   color: var(--primary-color);
+}
+
+.sidebarItem.active .sidebarItemButton {
+  background-color: var(--primary-color);
+  color: var(--secondary-color);
+  border-color: var(--secondary-color);
 }
 
 .sidebarItemText {

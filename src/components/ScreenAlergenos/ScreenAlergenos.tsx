@@ -8,17 +8,24 @@ import { useAppDispatch } from "../../hooks/redux";
 import { setDataTable } from "../../redux/slices/TablaReducer";
 import Swal from "sweetalert2";
 
-import { Button, CircularProgress } from "@mui/material";
+import { CircularProgress } from "@mui/material";
 import { ModalAlergeno } from "../ui/modals/ModalAlergenos/ModalAlergenos";
-
+import styles from './ScreenAlergenos.module.css';
 // Definición de la URL base de la API desde el archivo .env 
 const API_URL = import.meta.env.VITE_API_URL;
 
-export const ScreenAlergenos = () => {
+interface ScreenAlergenosProps {
+  openModal: boolean;
+  setOpenModal: (state: boolean) => void;
+}
+
+export const ScreenAlergenos: React.FC<ScreenAlergenosProps> = ({ 
+  openModal, 
+  setOpenModal 
+}) => {
   const { idempresa, idsucursal } = useParams();
   const dispatch = useAppDispatch();
   const [loading, setLoading] = useState(false);
-  const [openModal, setOpenModal] = useState(false);
   const [alergenosData, setAlergenosData] = useState<IAlergenos[]>([]);
 
   const alergenosService = useMemo(() => new AlergenosService(`${API_URL}/alergenos`), []);
@@ -76,24 +83,22 @@ export const ScreenAlergenos = () => {
   return (
     <>
       <div>
-        <div style={{ padding: ".4rem", display: "flex", justifyContent: "flex-end", width: "90%" }}>
-          <Button onClick={() => setOpenModal(true)} variant="contained">
-            Agregar
-          </Button>
-        </div>
         {loading ? (
           <div style={{ display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column", width: "100%", gap: "2vh", height: "100%" }}>
             <CircularProgress color="secondary" />
             <h2>Cargando...</h2>
           </div>
         ) : (
-          <TableGeneric<IAlergenos>
-            data={alergenosData}
+          <div>
+            <h3 className={styles.title}>Alérgenos</h3>
+            <TableGeneric<IAlergenos>
+              data={alergenosData}
             handleDelete={handleDelete}
             columns={ColumnsTableAlergenos}
             setOpenModal={setOpenModal}
-          />
-        )}
+            />
+          </div>
+          )}
       </div>
 
       <ModalAlergeno

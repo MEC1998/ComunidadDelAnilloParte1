@@ -11,28 +11,29 @@
   --secondary-color: #A9C4E0;
   --tercery-color: #023060;
   --background-color: rgb(196, 196, 196);
-  --background-color-main-content: #6A9AB0;
+  --background-color-main-content: #023060;
   --boton-admin-color: #3A6D8C;
   --transparency: 90%;
   --modal-background-color: #C8D8E9;
 }
 
 *::-webkit-scrollbar {
-  width: .8rem; /* Grosor de la barra de scroll */
-  height: 2px; /* Grosor de la barra horizontal, si es necesario */
-
+  width: .8rem;
+  height: 2px;
 }
+
 *::-webkit-scrollbar-track {
-  background-color: transparent; /* Fondo transparente */
+  background-color: transparent;
 }
 
 *::-webkit-scrollbar-thumb {
-  background-color: var(--secondary-color); /* Color del thumb */
+  background-color: rgba(169, 196, 224, 0.6); /* var(--secondary-color) con opacidad */
 }
 
 *::-webkit-scrollbar-thumb:hover {
-  background-color: var(--tercery-color)
+  background-color: rgba(2, 48, 96, 0.8); /* var(--tercery-color) con opacidad */
 }
+
 .d-flex {
   display: flex;
   justify-content: center;

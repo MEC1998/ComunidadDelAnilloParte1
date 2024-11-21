@@ -59,16 +59,14 @@ export const TableGeneric = <T extends { id: number } & Record<string, unknown>>
     <Paper 
       sx={{ 
         width: '100%',
-        height: '100%',
         overflow: 'hidden',
         backgroundColor: 'white',
-        borderRadius: '8px',
         boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
       }}
     >
       <TableContainer 
         sx={{ 
-          height: 'calc(100vh - 250px)',
+          height: 'calc(100vh - 220px)',
           '@media (max-width: 768px)': {
             maxHeight: 'calc(100vh - 200px)',
           }
