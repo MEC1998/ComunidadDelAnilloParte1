@@ -133,6 +133,9 @@ export const TableGeneric = <T extends { id: number } & Record<string, unknown>>
         page={page}
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
+        labelRowsPerPage="Filas por página:"
+        labelDisplayedRows={({ from, to, count }) => 
+          `${from}-${to} de ${count}`}
         sx={{
           position: 'sticky',
           bottom: 0,
