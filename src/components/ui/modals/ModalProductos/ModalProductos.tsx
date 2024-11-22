@@ -9,14 +9,14 @@ import { ProductosService } from "../../../../services/dtos/ProductosService";
 import { useAppDispatch, useAppSelector } from "../../../../hooks/redux";
 import { removeElementActive } from "../../../../redux/slices/TablaReducer";
 
-import { IUpdateProducto } from "../../../../types/dtos/productos/IUpdateProducto";
 const API_URL = import.meta.env.VITE_API_URL;
 
 // Interfaz para los props del componente ModalProducto
 interface IModalProducto {
-  getProductos: () => void; // Función para obtener los productos
+  getProductos: () => Promise<void>;
   openModal: boolean;
-  setOpenModal: (state: boolean) => void;
+  setOpenModal: (open: boolean) => void;
+  idsucursal: string;
 }
 
 // Definición del componente ModalProducto
@@ -88,9 +88,11 @@ export const ModalProducto = ({
             }}
             enableReinitialize={true}
             onSubmit={async (values: ICreateProducto) => {
-              const producto: IUpdateProducto = {
+              const producto = {
                 id: elementActive ? elementActive.id : 0,
+                eliminado: elementActive?.eliminado || false,
                 ...values,
+                descripcion: values.descripcion || ""
               };
 
               try {

@@ -7,7 +7,8 @@ export class ProductosService extends BackendClient<IProductos> {
   // Nuevo método para obtener productos por sucursal
   getBySucursal(idSucursal: number) {
     console.log("Llamando a la API con ID de sucursal:", idSucursal);
-    return this.apiGet(`/articulos/porSucursal/${idSucursal}`);
+    return fetch(`http://190.221.207.224:8090/articulos/porSucursal/${idSucursal}`)
+      .then(response => response.json());
   }
 
   // Método para crear un nuevo producto

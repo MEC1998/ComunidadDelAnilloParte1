@@ -54,7 +54,7 @@ export const ModalCompanyForm: React.FC<CompanyFormProps> = ({
             nombre: Yup.string().required("Campo requerido"),
             razonSocial: Yup.string().required("Campo requerido"),
             cuit: Yup.number().required("Campo requerido"),
-            logo: Yup.string().url("Debe ser una URL válida").required("Campo requerido"),
+            logo: Yup.string().nullable().url("Debe ser una URL válida"),
           })}
           onSubmit={handleSubmit}
         >

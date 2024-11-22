@@ -116,6 +116,7 @@ export const ScreenProductos: React.FC<ScreenProductosProps> = ({
         getProductos={getProductos}
         openModal={openModal}
         setOpenModal={setOpenModal}
+        idsucursal={idsucursal || ''}
       />
     </>
   );
