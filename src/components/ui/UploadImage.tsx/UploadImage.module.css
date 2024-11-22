@@ -9,23 +9,23 @@
 }
 
 .uploadedImageContainer {
-  border-radius: 0;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   padding: 0.4rem;
+  width: 100%;
 }
 
 .uploadedImage {
-  background-color: #ccc;
-  width: 10vw;
+  max-width: calc(100% - 10vw);
+  height: auto;
+  object-fit: contain;
   border-radius: 0;
-  height: 10vh;
-  object-fit: fill;
 }
 
 .uploadButton {
   width: 10vw;
+  flex-shrink: 0;
 }
 
 .noImage {

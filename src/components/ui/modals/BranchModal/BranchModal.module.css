@@ -129,3 +129,19 @@
 .cancelButton:hover {
     background-color: darkred  !important;
 }
+
+.optionGroup {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.optionLabel {
+    display: flex;
+    align-items: center;
+}
+
+.inputContainer {
+    margin-top: 0.5rem;
+}

@@ -228,20 +228,10 @@ const BranchModal: React.FC<BranchModalProps> = ({ onClose, onConfirm, initialDa
                                             <TextFieldValue  name="longitud" type="text" placeholder="Longitud" />
                                         </div>
                                     </div>
-
-                                    {/* Campo esCasaMatriz y logo */}
-                                    <div className={styles.row}>
-                                        <div className={styles.col}>
-                                            <div className={styles.formGroup}>
-                                                <label>
-                                                    <Field type="checkbox" name="esCasaMatriz" />
-                                                    Es Casa Matriz
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div className={styles.col}>
-                                            <div className={styles.formGroup}>
-                                                <label>
+                                    <div className={styles.col}>
+                                        <div className={styles.formGroup}>
+                                            <div className={styles.optionGroup}>
+                                                <label className={styles.optionLabel}>
                                                     <input
                                                         type="radio"
                                                         checked={useUrl}
@@ -249,17 +239,7 @@ const BranchModal: React.FC<BranchModalProps> = ({ onClose, onConfirm, initialDa
                                                     />
                                                     Usar URL
                                                 </label>
-                                                {useUrl && (
-                                                    <TextFieldValue
-                                                        name="logo"
-                                                        type="text"
-                                                        placeholder="URL del logo"
-                                                        disabled={!useUrl}
-                                                    />
-                                                )}
-                                            </div>
-                                            <div className={styles.formGroup}>
-                                                <label>
+                                                <label className={styles.optionLabel}>
                                                     <input
                                                         type="radio"
                                                         checked={!useUrl}
@@ -267,7 +247,16 @@ const BranchModal: React.FC<BranchModalProps> = ({ onClose, onConfirm, initialDa
                                                     />
                                                     Subir Imagen
                                                 </label>
-                                                {!useUrl && (
+                                            </div>
+                                            <div className={styles.inputContainer}>
+                                                {useUrl ? (
+                                                    <TextFieldValue
+                                                        name="logo"
+                                                        type="text"
+                                                        placeholder="URL del logo"
+                                                        disabled={!useUrl}
+                                                    />
+                                                ) : (
                                                     <UploadImage
                                                         image={image}
                                                         setImage={setImage}
@@ -275,6 +264,16 @@ const BranchModal: React.FC<BranchModalProps> = ({ onClose, onConfirm, initialDa
                                                         disabled={useUrl}
                                                     />
                                                 )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className={styles.row}>
+                                        <div className={styles.col}>
+                                            <div className={styles.formGroup}>
+                                                <label>
+                                                    <Field type="checkbox" name="esCasaMatriz" />
+                                                    Es Casa Matriz
+                                                </label>
                                             </div>
                                         </div>
                                     </div>
