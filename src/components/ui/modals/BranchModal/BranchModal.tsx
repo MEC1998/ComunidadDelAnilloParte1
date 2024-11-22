@@ -67,6 +67,23 @@ const BranchModal: React.FC<BranchModalProps> = ({ onClose, onConfirm, initialDa
         queryFn: fetchPaises,
     });
 
+    const validationSchema = Yup.object().shape({
+        nombre: Yup.string().required("Campo requerido"),
+        horarioApertura: Yup.string().required("Campo requerido"),
+        horarioCierre: Yup.string().required("Campo requerido"),
+        paisId: Yup.string().required("Campo requerido"),
+        provincia: Yup.string().required("Campo requerido"),
+        localidad: Yup.string().required("Campo requerido"),
+        calle: Yup.string().required("Campo requerido"),
+        numero: Yup.string().required("Campo requerido"),
+        cp: Yup.string().required("Campo requerido"),
+        logo: Yup.string().when("useUrl", {
+            is: true,
+            then: (schema) => schema.url("Debe ser una URL válida").required("Campo requerido"),
+            otherwise: (schema) => schema.notRequired()
+        }),
+    });
+
     return (
         <div className={styles.modalOverlay}>
             <div className={styles.modalContent}>
@@ -76,18 +93,7 @@ const BranchModal: React.FC<BranchModalProps> = ({ onClose, onConfirm, initialDa
                 <div className={styles.modalBody}>
                     <Formik
                         initialValues={initialValues}
-                        validationSchema={Yup.object().shape({
-                            nombre: Yup.string().required("Campo requerido"),
-                            horarioApertura: Yup.string().required("Campo requerido"),
-                            horarioCierre: Yup.string().required("Campo requerido"),
-                            paisId: Yup.string().required("Campo requerido"),
-                            provincia: Yup.string().required("Campo requerido"),
-                            localidad: Yup.string().required("Campo requerido"),
-                            calle: Yup.string().required("Campo requerido"),
-                            numero: Yup.string().required("Campo requerido"),
-                            cp: Yup.string().required("Campo requerido"),
-                            logo: Yup.string().url("Debe ser una URL válida"),
-                        })}
+                        validationSchema={validationSchema}
                         onSubmit={(values) => {
                             const submissionData: Partial<ISucursal> = {
                                 ...initialData,
