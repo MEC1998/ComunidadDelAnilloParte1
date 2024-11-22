@@ -1,0 +1,25 @@
+.modalForm {
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.formGroup {
+  margin-bottom: 0.8rem;
+}
+
+.formGroup label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-bottom: 0.2rem;
+  color: #555;
+}
+
+.formGroup input,
+.formGroup select {
+  font-size: 0.9rem;
+  padding: 0.4rem 0.8rem;
+}
+
+.submitButton {
+  margin-top: 1rem;
+} 

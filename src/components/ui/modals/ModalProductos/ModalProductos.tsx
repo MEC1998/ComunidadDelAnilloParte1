@@ -8,7 +8,10 @@ import { Form, Formik } from "formik";
 import { ProductosService } from "../../../../services/dtos/ProductosService";
 import { useAppDispatch, useAppSelector } from "../../../../hooks/redux";
 import { removeElementActive } from "../../../../redux/slices/TablaReducer";
-
+import { useEffect, useState, useCallback } from "react";
+import { CategoriasService } from "../../../../services/dtos/CategoriasService";
+import styles from './ModalProductos.module.css';
+import { ICategorias } from "../../../../types/dtos/categorias/ICategorias";
 const API_URL = import.meta.env.VITE_API_URL;
 
 // Interfaz para los props del componente ModalProducto
@@ -24,10 +27,29 @@ export const ModalProducto = ({
   getProductos,
   openModal,
   setOpenModal,
+  idsucursal
 }: IModalProducto) => {
+  const [categorias, setCategorias] = useState<ICategorias[]>([]);
   const elementActive = useAppSelector(
     (state) => state.tablaReducer.elementActive
   );
+  
+  // Función para obtener categorías
+  const getCategorias = useCallback(async () => {
+    const apiCategorias = new CategoriasService(API_URL + "/categorias");
+    try {
+      const data = await apiCategorias.getAllCategoriasPorSucursal(Number(idsucursal));
+      setCategorias(data);
+    } catch (error) {
+      console.error("Error al obtener categorías:", error);
+    }
+  }, [idsucursal]);
+
+  useEffect(() => {
+    if (openModal) {
+      getCategorias();
+    }
+  }, [openModal, idsucursal, getCategorias]);
   
   // Valores iniciales para el formulario
   const initialValues: ICreateProducto = {
@@ -57,7 +79,6 @@ export const ModalProducto = ({
         id={"modal"}
         show={openModal}
         onHide={handleClose}
-        size={"lg"}
         backdrop="static"
         keyboard={false}
       >
@@ -111,47 +132,70 @@ export const ModalProducto = ({
               }
             }}
           >
-            {() => (
-              <>
-                {/* Formulario */}
-                <Form autoComplete="off" className="form-obraAlta">
-                  <div className="container_Form_Ingredientes">
-                    {/* Campos del formulario */}
+            {({ values, setFieldValue }) => (
+              <Form autoComplete="off" className={styles.modalForm}>
+                <div className="d-flex flex-column gap-2">
+                  <div className={styles.formGroup}>
+                    <label htmlFor="denominacion">Denominación:</label>
                     <TextFieldValue
                       name="denominacion"
                       type="text"
                       placeholder="Denominación"
                     />
+                  </div>
+
+                  <div className={styles.formGroup}>
+                    <label htmlFor="precioVenta">Precio de Venta:</label>
                     <TextFieldValue
                       name="precioVenta"
                       type="number"
                       placeholder="Precio de Venta"
                     />
+                  </div>
+
+                  <div className={styles.formGroup}>
+                    <label htmlFor="descripcion">Descripción:</label>
                     <TextFieldValue
                       name="descripcion"
                       type="text"
                       placeholder="Descripción"
                     />
+                  </div>
+
+                  <div className={styles.formGroup}>
+                    <label htmlFor="codigo">Código:</label>
                     <TextFieldValue
                       name="codigo"
                       type="text"
                       placeholder="Código"
                     />
-                    <TextFieldValue
+                  </div>
+
+                  <div className={styles.formGroup}>
+                    <label htmlFor="idCategoria">Categoría:</label>
+                    <select
                       name="idCategoria"
-                      type="number"
-                      placeholder="ID Categoría"
-                    />
-                    {/* Otros campos según sea necesario */}
+                      className="form-select"
+                      onChange={(e) => {
+                        setFieldValue("idCategoria", Number(e.target.value));
+                      }}
+                      value={values.idCategoria}
+                    >
+                      <option value="">Seleccione una categoría</option>
+                      {categorias.map((categoria) => (
+                        <option key={categoria.id} value={categoria.id}>
+                          {categoria.denominacion}
+                        </option>
+                      ))}
+                    </select>
                   </div>
-                  {/* Botón para enviar el formulario */}
-                  <div className="d-flex justify-content-end">
-                    <Button variant="success" type="submit">
-                      Enviar
-                    </Button>
-                  </div>
-                </Form>
-              </>
+                </div>
+                <div className="d-flex justify-content-end">
+                  <Button variant="success" type="submit" className={styles.submitButton}>
+                    Enviar
+                  </Button>
+                </div>
+              </Form>
             )}
           </Formik>
         </Modal.Body>
