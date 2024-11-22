@@ -1,6 +1,5 @@
-import { useEffect, useState, useCallback, useMemo } from "react";
+import { useEffect, useState, useCallback } from "react";
 
-import { ProductosService } from "../../services/dtos/ProductosService";
 import { IProductos } from "../../types/dtos/productos/IProductos";
 import { TableGeneric } from "../ui/TableGeneric/TableGeneric";
 import { useAppDispatch } from "../../hooks/redux";
@@ -17,7 +16,6 @@ interface ScreenProductosProps {
 }
 
 // Definición de la URL base de la API desde el archivo .env 
-const API_URL = import.meta.env.VITE_API_URL;
 
 export const ScreenProductos: React.FC<ScreenProductosProps> = ({ 
   idempresa, 
@@ -29,7 +27,6 @@ export const ScreenProductos: React.FC<ScreenProductosProps> = ({
   const [loading, setLoading] = useState(false);
   const [productosData, setProductosData] = useState<IProductos[]>([]);
 
-  const productosService = useMemo(() => new ProductosService(`${API_URL}/productos`), []);
 
   // Función para obtener los productos de la sucursal seleccionada
   const getProductos = useCallback(async () => {
@@ -82,11 +79,23 @@ export const ScreenProductos: React.FC<ScreenProductosProps> = ({
       cancelButtonColor: "#d33",
       confirmButtonText: "Si, Eliminar!",
       cancelButtonText: "Cancelar",
-    }).then((result) => {
+    }).then(async (result) => {
       if (result.isConfirmed) {
-        productosService.delete(id).then(() => {
-          getProductos();
-        });
+        try {
+          const response = await fetch(`http://190.221.207.224:8090/articulos/${id}`, {
+            method: 'DELETE'
+          });
+          
+          if (!response.ok) {
+            throw new Error('Error al eliminar el producto');
+          }
+          
+          await getProductos();
+          Swal.fire('¡Eliminado!', 'El producto ha sido eliminado.', 'success');
+        } catch (error) {
+          console.error('Error:', error);
+          Swal.fire('Error', 'No se pudo eliminar el producto', 'error');
+        }
       }
     });
   };

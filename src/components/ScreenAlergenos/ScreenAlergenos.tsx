@@ -28,7 +28,6 @@ export const ScreenAlergenos: React.FC<ScreenAlergenosProps> = ({
   const [loading, setLoading] = useState(false);
   const [alergenosData, setAlergenosData] = useState<IAlergenos[]>([]);
 
-  const alergenosService = useMemo(() => new AlergenosService(`${API_URL}/alergenos`), []);
 
   const getAlergenos = useCallback(async () => {
     setLoading(true);
@@ -71,11 +70,18 @@ export const ScreenAlergenos: React.FC<ScreenAlergenosProps> = ({
       cancelButtonColor: "#d33",
       confirmButtonText: "Si, Eliminar!",
       cancelButtonText: "Cancelar",
-    }).then((result) => {
+    }).then(async (result) => {
       if (result.isConfirmed) {
-        alergenosService.delete(id).then(() => {
-          getAlergenos();
-        });
+        try {
+          const apiAlergeno = new AlergenosService(API_URL + "/alergenos");
+          await apiAlergeno.deleteAlergeno(id);
+          
+          await getAlergenos();
+          Swal.fire('¡Eliminado!', 'El alérgeno ha sido eliminado.', 'success');
+        } catch (error) {
+          console.error('Error:', error);
+          Swal.fire('Error', 'No se pudo eliminar el alérgeno', 'error');
+        }
       }
     });
   };
