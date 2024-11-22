@@ -1,68 +1,70 @@
 /* card */
 .card {
-    width: 100%;
-    max-width: 16rem;
-    height: 20rem;
-    background-color: white;
-    padding: 1rem 1rem 0 1rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    border-radius: 0.4rem;
-    box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.05);
-  }
-  .cardTitle {
-    text-align: center;
-    font-size: 1rem;
-    font-weight: 600;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: normal;
-    word-wrap: break-word;
-    line-height: 0.97;
-    height: 2rem;
-    width: 100%;
-  }
-  
-  .cardDescription {
-    display: flex;
-    font-size: .9rem;
-    height: 1rem;
-  }
-  .cardTime {
-    font-size: 0.9rem;
-    text-align: center;
-    height: 1rem;
-  }
-  .cardImgContainer {
-    height: 10rem;
-    width: 100%;
-  }
-  .cardImg {
-    padding-top: 1rem;
-    display: flex;
-    height: 100%;
-    width: 100%;
-    object-fit:scale-down;
-  }
-  .cardButtons {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 4rem;
-    gap: 1rem;
-  }
-  .cardButton {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: none;
-    border-radius: 50%;
-    background-color: var(--secondary-color);
-    padding: .8rem;
-  }
-  .cardButton:hover {
-    background-color: var(--primary-color);
-    color: var(--secondary-color);
-  }
-  
+  width: 100%;
+  max-width: 16rem;
+  height: 20rem;
+  background-color: white;
+  padding: 1rem 1rem 0 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 0.4rem;
+  box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.05);
+}
+.cardTitle {
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+  word-wrap: break-word;
+  line-height: 0.97;
+  height: 2rem;
+  width: 100%;
+}
+
+.cardDescription {
+  display: flex;
+  font-size: .9rem;
+  height: 1rem;
+  line-height: 0.97;
+  text-align: center;
+
+}
+.cardTime {
+  font-size: 0.9rem;
+  text-align: center;
+  height: 1rem;
+}
+.cardImgContainer {
+  height: 10rem;
+  width: 100%;
+}
+.cardImg {
+  padding-top: 1rem;
+  display: flex;
+  height: 100%;
+  width: 100%;
+  object-fit:scale-down;
+}
+.cardButtons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 4rem;
+  gap: 1rem;
+}
+.cardButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  background-color: var(--secondary-color);
+  padding: .8rem;
+}
+.cardButton:hover {
+  background-color: var(--primary-color);
+  color: var(--secondary-color);
+}

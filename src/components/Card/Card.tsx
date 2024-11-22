@@ -7,6 +7,7 @@ import { useState } from "react";
 import { BranchInfoModal } from "../ui/modals/BranchInfoModal/BranchInfoModal";
 import BranchModal from "../ui/modals/BranchModal/BranchModal";
 import { SucursalService } from "../../services/dtos/SucursalService";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface CardProps {
     branchName: string;
@@ -23,6 +24,7 @@ export const Card = ({ branchName, companyName, openingHours, image, branchData 
     const dispatch = useAppDispatch();
     const [showBranchInfo, setShowBranchInfo] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
+    const queryClient = useQueryClient();
 
     const handleApartmentClick = () => {
         dispatch(setSelectedBranch(branchData));
@@ -62,7 +64,12 @@ export const Card = ({ branchName, companyName, openingHours, image, branchData 
                 horarioApertura: updatedBranch.horarioApertura || branchData.horarioApertura,
                 horarioCierre: updatedBranch.horarioCierre || branchData.horarioCierre,
             });
-            console.log("Sucursal actualizada:", updatedBranch);
+            
+            // Invalidar la query para refrescar los datos
+            queryClient.invalidateQueries({ 
+                queryKey: ['sucursales', branchData.empresa.id] 
+            });
+            
         } catch (error) {
             console.error("Error al actualizar la sucursal:", error);
         } finally {

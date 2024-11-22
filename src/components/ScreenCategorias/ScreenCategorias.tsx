@@ -5,39 +5,40 @@ import { TableGeneric } from "../ui/TableGeneric/TableGeneric";
 import { useAppDispatch } from "../../hooks/redux";
 import { setDataTable } from "../../redux/slices/TablaReducer";
 import Swal from "sweetalert2";
-import { CircularProgress } from "@mui/material";
+import { CircularProgress, Button } from "@mui/material";
 import { ModalCategoria } from "../ui/modals/ModalCategorias/ModalCategorias";
 import styles from './ScreenCategorias.module.css';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
 interface ScreenCategoriasProps {
-    _idempresa?: string;
     idsucursal?: string;
     openModal: boolean;
     setOpenModal: (state: boolean) => void;
 }
 
 export const ScreenCategorias: React.FC<ScreenCategoriasProps> = ({ 
-    _idempresa, 
     idsucursal,
     openModal,
     setOpenModal 
 }) => {
     const dispatch = useAppDispatch();
-    console.log(_idempresa);
-    
     const [loading, setLoading] = useState(false);
-    const [categorias, setCategorias] = useState<ICategorias[]>([]);
+    const [expandedCategories, setExpandedCategories] = useState<{ [key: number]: boolean }>({});
+    const [loadingSubcategorias, setLoadingSubcategorias] = useState<{ [key: number]: boolean }>({});
+    const [allData, setAllData] = useState<ICategorias[]>([]);
 
     const categoriasService = useMemo(() => new CategoriasService(`${API_URL}/categorias`), []);
 
+    // ... existing code ...
     const fetchCategorias = useCallback(async () => {
         setLoading(true);
         try {
             const data = await categoriasService.getAllCategoriasPorSucursal(Number(idsucursal));
-            setCategorias(data);
-            dispatch(setDataTable(data));
+            // Filtramos para mostrar solo las categorías padre (aquellas sin categoriaPadre)
+            const categoriasPadre = data.filter(categoria => !categoria.categoriaPadre);
+            setAllData(categoriasPadre);
+            dispatch(setDataTable(categoriasPadre));
         } catch (error) {
             console.error("Error al cargar categorías:", error);
             Swal.fire('Error', 'No se pudieron cargar las categorías', 'error');
@@ -45,20 +46,92 @@ export const ScreenCategorias: React.FC<ScreenCategoriasProps> = ({
             setLoading(false);
         }
     }, [idsucursal, dispatch, categoriasService]);
+// ... existing code ...
 
-    useEffect(() => {
-        fetchCategorias();
-    }, [fetchCategorias]);
+    const toggleSubcategorias = async (categoriaId: number) => {
+        if (expandedCategories[categoriaId]) {
+            // Si ya están expandidas, las ocultamos
+            setExpandedCategories(prev => ({ ...prev, [categoriaId]: false }));
+            // Filtramos las subcategorías de esta categoría específica
+            setAllData(prev => prev.filter(cat => cat.categoriaPadre?.id !== categoriaId));
+        } else {
+            setLoadingSubcategorias(prev => ({ ...prev, [categoriaId]: true }));
+            try {
+                const categoriaCompleta = await categoriasService.getCategoriaById(categoriaId);
+                
+                if (categoriaCompleta.subCategorias && categoriaCompleta.subCategorias.length > 0) {
+                    // Preparamos las subcategorías con la referencia a su categoría padre
+                    const subcategoriasConPadre = categoriaCompleta.subCategorias.map(sub => ({
+                        ...sub,
+                        categoriaPadre: {
+                            id: categoriaId,
+                            denominacion: categoriaCompleta.denominacion,
+                            eliminado: false,
+                            sucursales: [],
+                            subCategorias: [],
+                            articulos: []
+                        }
+                    }));
+
+                    // Agregamos las subcategorías justo después de su categoría padre
+                    const newData = [...allData];
+                    const parentIndex = newData.findIndex(cat => cat.id === categoriaId);
+                    newData.splice(parentIndex + 1, 0, ...subcategoriasConPadre);
+                    setAllData(newData);
+                    setExpandedCategories(prev => ({ ...prev, [categoriaId]: true }));
+                }
+            } catch (error) {
+                console.error("Error al cargar subcategorías:", error);
+                Swal.fire('Error', 'No se pudieron cargar las subcategorías', 'error');
+            } finally {
+                setLoadingSubcategorias(prev => ({ ...prev, [categoriaId]: false }));
+            }
+        }
+    };
 
     const ColumnsTableCategoria = [
+        {
+            label: "",
+            key: "expandir",
+            render: (categoria: ICategorias) => {
+                if (categoria.categoriaPadre) {
+                    return <span style={{ marginLeft: '20px' }}>↳</span>;
+                }
+                return (
+                    <Button 
+                        variant="text"
+                        onClick={() => toggleSubcategorias(categoria.id)}
+                        disabled={loadingSubcategorias[categoria.id]}
+                    >
+                        {loadingSubcategorias[categoria.id] ? (
+                            <CircularProgress size={20} />
+                        ) : (
+                            expandedCategories[categoria.id] ? '▼' : '▶'
+                        )}
+                    </Button>
+                );
+            },
+        },
         {
             label: "ID",
             key: "id",
             render: (categoria: ICategorias) => (categoria?.id ? categoria.id : 0),
         },
-        { label: "Denominación", key: "denominacion" },
+        {
+            label: "Denominación",
+            key: "denominacion",
+            render: (categoria: ICategorias) => (
+                <span style={{ marginLeft: categoria.categoriaPadre ? '20px' : '0' }}>
+                    {categoria.denominacion}
+                </span>
+            ),
+        },
         { label: "Acciones", key: "acciones" },
     ];
+
+    useEffect(() => {
+        fetchCategorias();
+    }, [fetchCategorias]);
 
     const handleDelete = async (id: number) => {
         Swal.fire({
@@ -97,9 +170,9 @@ export const ScreenCategorias: React.FC<ScreenCategoriasProps> = ({
                         <h3 className={styles.title}>Categorías</h3>
                         <TableGeneric<ICategorias>
                             handleDelete={handleDelete}
-                        columns={ColumnsTableCategoria}
-                        setOpenModal={setOpenModal}
-                            data={categorias}
+                            columns={ColumnsTableCategoria}
+                            setOpenModal={setOpenModal}
+                            data={allData}
                         />
                     </div>
                 )}

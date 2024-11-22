@@ -94,4 +94,73 @@ export class CategoriasService extends BackendClient<ICategorias> {
             throw error;
         }
     }
+
+    async getAllCategoriasPorEmpresa(idEmpresa: number): Promise<ICategorias[]> {
+        try {
+            const response = await fetch(`http://190.221.207.224:8090/categorias/allCategoriasPorEmpresa/${idEmpresa}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                }
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                console.error("Error al obtener las categorías:", errorData);
+                throw new Error(`Error al obtener las categorías: ${response.statusText}`);
+            }
+
+            const categorias = await response.json();
+            return categorias as ICategorias[];
+        } catch (error) {
+            console.error("Error en la solicitud:", error);
+            throw error;
+        }
+    }
+
+    async getSubCategoriasPorCategoriaPadre(idSucursal: number, idCategoriaPadre: number): Promise<ICategorias[]> {
+        try {
+            const response = await fetch(`http://190.221.207.224:8090/categorias/allSubCategoriasPorCategoriaPadre/${idCategoriaPadre}/${idSucursal}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                }
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                console.error("Error al obtener las subcategorías:", errorData);
+                throw new Error(`Error al obtener las subcategorías: ${response.statusText}`);
+            }
+
+            const subcategorias = await response.json();
+            return subcategorias as ICategorias[];
+        } catch (error) {
+            console.error("Error en la solicitud:", error);
+            throw error;
+        }
+    }
+
+    async getCategoriaById(idCategoria: number): Promise<ICategorias> {
+        try {
+            const response = await fetch(`http://190.221.207.224:8090/categorias/${idCategoria}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                }
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                console.error("Error al obtener la categoría:", errorData);
+                throw new Error(`Error al obtener la categoría: ${response.statusText}`);
+            }
+
+            const categoria = await response.json();
+            return categoria as ICategorias;
+        } catch (error) {
+            console.error("Error en la solicitud:", error);
+            throw error;
+        }
+    }
 } 
