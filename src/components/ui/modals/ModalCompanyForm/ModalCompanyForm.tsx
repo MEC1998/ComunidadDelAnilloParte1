@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "react-bootstrap";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
@@ -6,6 +6,8 @@ import TextFieldValue from "../../TextFildValue/TextFildValue";
 import styles from "./ModalCompanyForm.module.css";
 import { ICreateEmpresaDto } from "../../../../types/dtos/empresa/ICreateEmpresaDto";
 import { IUpdateEmpresaDto } from "../../../../types/dtos/empresa/IUpdateEmpresaDto";
+import { UploadImage } from "../../UploadImage.tsx/UploadImage";
+
 
 interface CompanyFormProps {
   onAddCompany: (company: ICreateEmpresaDto) => Promise<void>;
@@ -20,18 +22,21 @@ export const ModalCompanyForm: React.FC<CompanyFormProps> = ({
   onClose,
   editingCompany,
 }) => {
+  const [image, setImage] = useState<string | null>(editingCompany?.logo || null);
+
   const initialValues: ICreateEmpresaDto = {
     nombre: editingCompany?.nombre || "",
     razonSocial: editingCompany?.razonSocial || "",
     cuit: editingCompany?.cuit || 0,
-    logo: editingCompany?.logo || "",
+    logo: image,
   };
 
   const handleSubmit = async (values: ICreateEmpresaDto) => {
+    const companyData = { ...values, logo: image };
     if (editingCompany && onEditCompany) {
-      await onEditCompany({ ...editingCompany, ...values });
+      await onEditCompany({ ...editingCompany, ...companyData });
     } else if (onAddCompany) {
-      await onAddCompany(values);
+      await onAddCompany(companyData);
     }
   };
 
@@ -57,7 +62,9 @@ export const ModalCompanyForm: React.FC<CompanyFormProps> = ({
             <TextFieldValue name="nombre" type="text" placeholder="Nombre de la empresa" />
             <TextFieldValue name="razonSocial" type="text" placeholder="Razón Social" />
             <TextFieldValue name="cuit" type="number" placeholder="CUIT" />
-            <TextFieldValue name="logo" type="text" placeholder="URL del logo" />
+            <div>
+            <UploadImage image={image} setImage={setImage} />
+            </div>
             <div className={styles.buttons}>
               <Button variant="success" type="submit">
                 {editingCompany ? "Guardar cambios" : "Confirmar"}

@@ -1,3 +1,4 @@
+import Swal from "sweetalert2";
 import { AbstractBackendClient } from "./AbstractBackendClient";
 
 export abstract class BackendClient<T> extends AbstractBackendClient<T> {
@@ -6,79 +7,93 @@ export abstract class BackendClient<T> extends AbstractBackendClient<T> {
   }
 
   async getAll(): Promise<T[]> {
-    const response = await fetch(`${this.baseUrl}`, {
-      method: "GET",
-      mode: "cors",
-    });
+    const response = await fetch(`${this.baseUrl}`);
     if (!response.ok) {
-      throw new Error(`Error al obtener todos los elementos: ${response.statusText}`);
+      throw new Error(`Error`);
     }
     const data = await response.json();
     return data as T[];
   }
 
-  async getById(id: number): Promise<T | null> {
-    const response = await fetch(`${this.baseUrl}/${id}`, {
-      method: "GET",
-      mode: "cors",
-    });
+  async getById(id: string): Promise<T | null> {
+    const response = await fetch(`${this.baseUrl}/${id}`);
     if (!response.ok) {
-      return null;
+      throw new Error(`Error`);
     }
     const data = await response.json();
     return data as T;
   }
 
   async post(data: T): Promise<T> {
-    const response = await fetch(`${this.baseUrl}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
+    Swal.fire({
+      title: "Enviando datos...",
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
       },
-      body: JSON.stringify(data),
-      mode: "cors",
     });
-    const newData = await response.json();
-    return newData as T;
+    try {
+      const response = await fetch(`${this.baseUrl}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+      if (!response.ok) {
+        throw new Error(`Error`);
+      }
+      const newData = await response.json();
+      return newData as T;
+    } finally {
+      Swal.close();
+    }
   }
 
   async put(id: number, data: T): Promise<T> {
-    const response = await fetch(`${this.baseUrl}/${id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
+    Swal.fire({
+      title: "Editando datos...",
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
       },
-      body: JSON.stringify(data),
     });
-    const newData = await response.json();
-    return newData as T;
+    try {
+      const response = await fetch(`${this.baseUrl}/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+      if (!response.ok) {
+        throw new Error(`Error`);
+      }
+      const newData = await response.json();
+      return newData as T;
+    } finally {
+      Swal.close();
+    }
   }
 
   // Método para eliminar un elemento por su ID
   async delete(id: number): Promise<void> {
-    const response = await fetch(`${this.baseUrl}/${id}`, {
-      method: "DELETE",
-      mode: "cors",
+    Swal.fire({
+      title: "Eliminando...",
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
     });
-    if (!response.ok) {
-      throw new Error(`Error al eliminar el elemento con ID ${id}: ${response.statusText}`);
-    }
-  }
-
-  protected async apiGet(endpoint: string): Promise<T[]> {
     try {
-      const response = await fetch(`${this.baseUrl}${endpoint}`, {
-        method: "GET",
-        mode: "cors",
+      const response = await fetch(`${this.baseUrl}/${id}`, {
+        method: "DELETE",
       });
       if (!response.ok) {
-        throw new Error(`Error al realizar la solicitud GET a ${endpoint}: ${response.statusText}`);
+        throw new Error(`Error`);
       }
-      const data = await response.json();
-      return data as T[];
-    } catch (error) {
-      console.error("Error en apiGet:", error);
-      throw error; // Vuelve a lanzar el error para que pueda ser manejado en otro lugar
+    } finally {
+      Swal.close();
     }
   }
 }

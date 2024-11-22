@@ -15,8 +15,8 @@
 
 .row {
     display: flex;
-    gap: 0.5rem;
-    margin-bottom: 0.5rem;
+    gap: 0.25rem;
+    margin-bottom: 0.25rem;
 }
 
 .col {
@@ -92,7 +92,7 @@
     flex-direction: column;
     width: 100%;
     justify-content: center;
-    height: 100%;
+    margin-bottom: 0.25rem;
 }
 
 .input-formulario {

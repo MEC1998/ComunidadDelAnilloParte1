@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "react-bootstrap";
 import { Formik, Form, Field } from "formik";
@@ -6,6 +7,7 @@ import styles from "./BranchModal.module.css";
 import { IPais } from "../../../../types/IPais";
 import { ISucursal } from "../../../../types/dtos/sucursal/ISucursal";
 import TextFieldValue from "../../TextFildValue/TextFildValue";
+import { UploadImage } from "../../UploadImage.tsx/UploadImage";
 
 interface BranchModalProps {
     onClose: () => void;
@@ -39,6 +41,9 @@ const fetchPaises = async (): Promise<IPais[]> => {
 };
 
 const BranchModal: React.FC<BranchModalProps> = ({ onClose, onConfirm, initialData }) => {
+    const [useUrl, setUseUrl] = useState<boolean>(true);
+    const [image, setImage] = useState<string | null>(initialData?.logo || null);
+
     const initialValues = {
         nombre: initialData?.nombre || "",
         horarioApertura: initialData?.horarioApertura || "",
@@ -116,7 +121,7 @@ const BranchModal: React.FC<BranchModalProps> = ({ onClose, onConfirm, initialDa
                                         }
                                     },
                                 },
-                                logo: typeof values.logo === 'string' ? values.logo : undefined
+                                logo: useUrl ? values.logo || undefined : image || undefined,
                             };
                             onConfirm(submissionData);
                             onClose();
@@ -128,13 +133,11 @@ const BranchModal: React.FC<BranchModalProps> = ({ onClose, onConfirm, initialDa
                                 <div className={styles.section}>
                                     <h5>Información General: </h5>
                                     <div className={styles.row}>
-                                        <div className={styles.col}>
-                                            <TextFieldValue 
-                                                name="nombre" 
-                                                type="text" 
-                                                placeholder="Nombre de la sucursal" 
-                                            />
-                                        </div>
+                                        <TextFieldValue 
+                                            name="nombre" 
+                                            type="text" 
+                                            placeholder="Nombre de la sucursal" 
+                                        />
                                     </div>
 
                                     <div className={styles.row}>
@@ -237,7 +240,42 @@ const BranchModal: React.FC<BranchModalProps> = ({ onClose, onConfirm, initialDa
                                             </div>
                                         </div>
                                         <div className={styles.col}>
-                                            <TextFieldValue name="logo" type="text" placeholder="URL del logo" />
+                                            <div className={styles.formGroup}>
+                                                <label>
+                                                    <input
+                                                        type="radio"
+                                                        checked={useUrl}
+                                                        onChange={() => setUseUrl(true)}
+                                                    />
+                                                    Usar URL
+                                                </label>
+                                                {useUrl && (
+                                                    <TextFieldValue
+                                                        name="logo"
+                                                        type="text"
+                                                        placeholder="URL del logo"
+                                                        disabled={!useUrl}
+                                                    />
+                                                )}
+                                            </div>
+                                            <div className={styles.formGroup}>
+                                                <label>
+                                                    <input
+                                                        type="radio"
+                                                        checked={!useUrl}
+                                                        onChange={() => setUseUrl(false)}
+                                                    />
+                                                    Subir Imagen
+                                                </label>
+                                                {!useUrl && (
+                                                    <UploadImage
+                                                        image={image}
+                                                        setImage={setImage}
+                                                        typeElement="sucursales"
+                                                        disabled={useUrl}
+                                                    />
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
