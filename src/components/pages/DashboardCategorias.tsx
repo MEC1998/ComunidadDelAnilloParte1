@@ -6,7 +6,7 @@ import { useParams } from "react-router-dom";
 import { useState } from "react";
 
 export const DashboardCategorias = () => {
-    const { idempresa, idsucursal } = useParams();
+    const { idsucursal } = useParams();
     const [openModal, setOpenModal] = useState(false);
 
     return (

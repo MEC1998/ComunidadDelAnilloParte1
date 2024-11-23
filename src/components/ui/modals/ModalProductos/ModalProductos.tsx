@@ -52,14 +52,20 @@ export const ModalProducto = ({
   
   // Valores iniciales para el formulario
   const initialValues: ICreateProducto = {
-    denominacion: "",
-    precioVenta: 0,
-    descripcion: "",
-    habilitado: true,
-    codigo: "",
-    idCategoria: 0,
-    idAlergenos: [],
-    imagenes: []
+    denominacion: elementActive?.denominacion?.toString() || "",
+    precioVenta: elementActive?.precioVenta ? Number(elementActive.precioVenta) : 0,
+    descripcion: elementActive?.descripcion?.toString() || "",
+    habilitado: elementActive?.habilitado === false ? false : true,
+    codigo: elementActive?.codigo?.toString() || "",
+    idCategoria: elementActive?.categoria && typeof elementActive.categoria === 'object' && elementActive.categoria !== null && 'id' in elementActive.categoria
+      ? Number(elementActive.categoria.id) 
+      : 0,
+    idAlergenos: elementActive?.alergenos && Array.isArray(elementActive.alergenos) 
+      ? elementActive.alergenos.map(a => Number(a.id)) 
+      : [],
+    imagenes: elementActive?.imagenes && Array.isArray(elementActive.imagenes) 
+      ? elementActive.imagenes 
+      : [],
   };
 
   const apiProducto = new ProductosService(API_URL + "/productos");
@@ -72,133 +78,151 @@ export const ModalProducto = ({
   };
 
   return (
-    <div>
-      {/* Componente Modal de React Bootstrap */}
-      <Modal
-        id={"modal"}
-        show={openModal}
-        onHide={handleClose}
-        backdrop="static"
-        keyboard={false}
-      >
-        <Modal.Header closeButton>
-          {/* Título del modal dependiendo de si se está editando o añadiendo un producto */}
-          {elementActive ? (
-            <Modal.Title className={styles.modalTitle}>Editar un producto:</Modal.Title>
-          ) : (
-            <Modal.Title className={styles.modalTitle}>Añadir un producto:</Modal.Title>
-          )}
-        </Modal.Header>
-        <Modal.Body>
-          {/* Componente Formik para el formulario */}
-          <Formik
-            validationSchema={Yup.object({
-              denominacion: Yup.string().required("Campo requerido"),
-              precioVenta: Yup.number().required("Campo requerido"),
-              descripcion: Yup.string().nullable(),
-              habilitado: Yup.boolean().required("Campo requerido"),
-              codigo: Yup.string().required("Campo requerido"),
-              idCategoria: Yup.number().required("Campo requerido"),
-              idAlergenos: Yup.array().of(Yup.number()).required("Campo requerido"),
-              imagenes: Yup.array().of(Yup.object()).required("Campo requerido"),
-            })}
-            initialValues={{
-              ...initialValues,
-              ...elementActive,
-            }}
-            enableReinitialize={true}
-            onSubmit={async (values: ICreateProducto) => {
-              const producto = {
-                id: elementActive ? elementActive.id : 0,
-                eliminado: elementActive?.eliminado || false,
-                ...values,
-                descripcion: values.descripcion || ""
-              };
-
-              try {
-                if (elementActive) {
-                  await apiProducto.updateProducto(elementActive.id, producto);
-                  console.log("Producto actualizado con éxito");
-                } else {
-                  await apiProducto.createProducto(producto);
-                  console.log("Producto creado con éxito");
-                }
-
-                getProductos();
-                handleClose();
-              } catch (error) {
-                console.error("Error al procesar la solicitud:", error);
+    <Modal
+      show={openModal}
+      onHide={handleClose}
+      backdrop="static"
+      keyboard={false}
+    >
+      <Modal.Header closeButton>
+        <Modal.Title className={styles.modalTitle}>
+          {elementActive ? "Editar producto" : "Añadir producto"}
+        </Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Formik
+          validationSchema={Yup.object({
+            denominacion: Yup.string().required("Campo requerido"),
+            precioVenta: Yup.number().required("Campo requerido"),
+            descripcion: Yup.string().nullable(),
+            habilitado: Yup.boolean().required("Campo requerido"),
+            codigo: Yup.string().required("Campo requerido"),
+            idCategoria: Yup.number().required("Campo requerido"),
+            idAlergenos: Yup.array().of(Yup.number()).required("Campo requerido"),
+            imagenes: Yup.array().of(Yup.object()).required("Campo requerido"),
+          })}
+          initialValues={initialValues}
+          enableReinitialize={true}
+          onSubmit={async (values: ICreateProducto) => {
+            try {
+              if (elementActive) {
+                const updateData = {
+                  id: elementActive.id,
+                  eliminado: elementActive.eliminado,
+                  ...values,
+                };
+                await apiProducto.updateProducto(elementActive.id, updateData);
+              } else {
+                await apiProducto.createProducto(values);
               }
-            }}
-          >
-            {({ values, setFieldValue }) => (
-              <Form autoComplete="off" className={styles.modalForm}>
-                <div className="d-flex flex-column gap-2">
-                  <div className={styles.formGroup}>
-                    <label htmlFor="denominacion">Denominación:</label>
-                    <input
-                      name="denominacion"
-                      type="text"
-                      placeholder="Denominación"
-                    />
-                  </div>
-
-                  <div className={styles.formGroup}>
-                    <label htmlFor="precioVenta">Precio de Venta:</label>
-                    <input
-                      name="precioVenta"
-                      type="number"
-                      placeholder="Precio de Venta"
-                    />
-                  </div>
-
-                  <div className={styles.formGroup}>
-                    <label htmlFor="descripcion">Descripción:</label>
-                    <input
-                      name="descripcion"
-                      type="text"
-                      placeholder="Descripción"
-                    />
-                  </div>
-
-                  <div className={styles.formGroup}>
-                    <label htmlFor="codigo">Código:</label>
-                    <input
-                      name="codigo"
-                      type="text"
-                      placeholder="Código"
-                    />
-                  </div>
-
-                  <div className={styles.formGroup}>
-                    <label htmlFor="idCategoria" className={styles.formLabel}>Categoría:</label>
-                    <select
-                      name="idCategoria"
-                      className={styles.formSelect}
-                      onChange={(e) => {
-                        setFieldValue("idCategoria", Number(e.target.value));
-                      }}
-                      value={values.idCategoria}
-                    >
-                      <option value="">Seleccione una categoría</option>
-                      {categorias.map((categoria) => (
-                        <option key={categoria.id} value={categoria.id}>
-                          {categoria.denominacion}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+              await getProductos();
+              handleClose();
+            } catch (error) {
+              console.error("Error al procesar la solicitud:", error);
+            }
+          }}
+        >
+          {({ values, setFieldValue, errors, touched }) => (
+            <Form autoComplete="off" className={styles.modalForm}>
+              <div className="d-flex flex-column gap-2">
+                <div className={styles.formGroup}>
+                  <label htmlFor="denominacion">Denominación:</label>
+                  <input
+                    name="denominacion"
+                    type="text"
+                    value={values.denominacion}
+                    onChange={(e) => setFieldValue("denominacion", e.target.value)}
+                    className={styles.formInput}
+                    placeholder="Denominación"
+                  />
+                  {errors.denominacion && touched.denominacion && (
+                    <div className={styles.errorMessage}>{errors.denominacion}</div>
+                  )}
                 </div>
-                <div className="d-flex justify-content-end">
-                  <Button variant="success" type="submit" className={styles.submitButton}>
-                    Enviar
-                  </Button>
+
+                <div className={styles.formGroup}>
+                  <label htmlFor="precioVenta">Precio de Venta:</label>
+                  <input
+                    name="precioVenta"
+                    type="number"
+                    value={values.precioVenta}
+                    onChange={(e) => setFieldValue("precioVenta", Number(e.target.value))}
+                    className={styles.formInput}
+                    placeholder="Precio de Venta"
+                  />
+                  {errors.precioVenta && touched.precioVenta && (
+                    <div className={styles.errorMessage}>{errors.precioVenta}</div>
+                  )}
                 </div>
-              </Form>
-            )}
-          </Formik>
-        </Modal.Body>
-      </Modal>
-    </div>
+
+                <div className={styles.formGroup}>
+                  <label htmlFor="descripcion">Descripción:</label>
+                  <input
+                    name="descripcion"
+                    type="text"
+                    value={values.descripcion}
+                    onChange={(e) => setFieldValue("descripcion", e.target.value)}
+                    className={styles.formInput}
+                    placeholder="Descripción"
+                  />
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label htmlFor="codigo">Código:</label>
+                  <input
+                    name="codigo"
+                    type="text"
+                    value={values.codigo}
+                    onChange={(e) => setFieldValue("codigo", e.target.value)}
+                    className={styles.formInput}
+                    placeholder="Código"
+                  />
+                  {errors.codigo && touched.codigo && (
+                    <div className={styles.errorMessage}>{errors.codigo}</div>
+                  )}
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label htmlFor="idCategoria">Categoría:</label>
+                  <select
+                    name="idCategoria"
+                    value={values.idCategoria}
+                    onChange={(e) => setFieldValue("idCategoria", Number(e.target.value))}
+                    className={styles.formSelect}
+                  >
+                    <option value="">Seleccione una categoría</option>
+                    {categorias.map((categoria) => (
+                      <option key={categoria.id} value={categoria.id}>
+                        {categoria.denominacion}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.idCategoria && touched.idCategoria && (
+                    <div className={styles.errorMessage}>{errors.idCategoria}</div>
+                  )}
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label>
+                    <input
+                      type="checkbox"
+                      checked={values.habilitado}
+                      onChange={(e) => setFieldValue("habilitado", e.target.checked)}
+                    />
+                    {" "}Habilitado
+                  </label>
+                </div>
+              </div>
+
+              <div className="d-flex justify-content-end">
+                <Button variant="success" type="submit" className={styles.submitButton}>
+                  {elementActive ? "Guardar cambios" : "Crear producto"}
+                </Button>
+              </div>
+            </Form>
+          )}
+        </Formik>
+      </Modal.Body>
+    </Modal>
   );
 };
