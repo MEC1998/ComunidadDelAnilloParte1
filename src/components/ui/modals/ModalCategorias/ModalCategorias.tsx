@@ -11,6 +11,7 @@ import Swal from "sweetalert2";
 import { SucursalService } from "../../../../services/dtos/SucursalService";
 import { ISucursal } from "../../../../types/dtos/sucursal/ISucursal";
 import styles from "./ModalCategorias.module.css";
+import { Modal } from "react-bootstrap";
 const API_URL = import.meta.env.VITE_API_URL;
 
 interface IModalCategoria {
@@ -84,148 +85,160 @@ export const ModalCategoria = ({
     };
 
     return (
-        <>
-            {openModal && (
-                <div className={styles.modalOverlay}>
-                    <div className={styles.modalContent}>
-                        <div className={styles.modalHeader}>
-                            <h2 className={styles.modalTitle}>
-                                {elementActive ? "Editar categoría" : "Añadir categoría"}
-                            </h2>
-                        </div>
-                        <Formik
-                            validationSchema={Yup.object({
-                                denominacion: Yup.string().required("Campo requerido"),
-                                idEmpresa: Yup.number().required("Campo requerido"),
-                                categoriaPadre: Yup.mixed().nullable(),
-                                idSucursales: Yup.array().of(Yup.number()).required("Campo requerido")
-                            })}
-                            initialValues={{
-                                denominacion: elementActive?.denominacion || "",
-                                idEmpresa: Number(idempresa) || 0,
-                                categoriaPadre: elementActive?.categoriaPadre ? {
-                                    id: elementActive.categoriaPadre.id,
-                                    eliminado: false
-                                } : null,
-                                idSucursales: elementActive?.sucursales?.map(s => s.id) || [Number(idsucursal)]
-                            }}
-                            enableReinitialize={true}
-                            onSubmit={async (values: ICreateCategoria) => {
-                                try {
-                                    if (elementActive) {
-                                        const dataToUpdate = {
-                                            id: elementActive.id,
-                                            eliminado: false,
-                                            denominacion: values.denominacion,
-                                            idSucursales: values.idSucursales,
-                                            idCategoriaPadre: values.categoriaPadre ? values.categoriaPadre.id : null,
-                                            idEmpresa: Number(idempresa)
-                                        };
-                                        
-                                        console.log('Datos que se enviarán al backend:', dataToUpdate);
-                                        await apiCategoria.updateCategoria(elementActive.id, dataToUpdate);
-                                    } else {
-                                        await apiCategoria.createCategoria(values);
-                                    }
-                                    
-                                    getCategorias();
-                                    handleClose();
-                                } catch (error) {
-                                    console.error("Error detallado:", error);
-                                    Swal.fire('Error', 'Hubo un error al procesar la operación', 'error');
-                                }
-                            }}
-                        >
-                            {({ setFieldValue, values }) => (
-                                <Form autoComplete="off" className={styles.formContent}>
-                                    <div className={styles.formGroup}>
-                                        <label className={styles.formLabel}>Denominación:</label>
-                                        <input
-                                            name="denominacion"
-                                            type="text"
-                                            placeholder="Denominación"
-                                            className={styles.input}
-                                        />
-                                    </div>
-                                    
-                                    <div className={styles.formGroup}>
-                                        <label className={styles.formLabel}>
-                                            {elementActive?.categoriaPadre ? 
-                                                `Categoría Padre: ${elementActive.categoriaPadre.denominacion}` : 
-                                                'Categoría Padre'}
-                                        </label>
-                                        <select
-                                            className={styles.select}
-                                            value={values.categoriaPadre?.id || ''}
-                                            onChange={(e) => {
-                                                const value = e.target.value;
-                                                if (value) {
-                                                    const newCategoriaPadre = {
-                                                        id: Number(value),
-                                                        eliminado: false
-                                                    };
-                                                    setFieldValue('categoriaPadre', newCategoriaPadre);
-                                                } else {
-                                                    setFieldValue('categoriaPadre', null);
-                                                }
-                                            }}
+        <Modal
+            show={openModal}
+            onHide={handleClose}
+            backdrop="static"
+            keyboard={false}
+            size="lg"
+        >
+            <Modal.Header closeButton>
+                <Modal.Title>
+                    {elementActive ? "Editar categoría" : "Añadir categoría"}
+                </Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <Formik
+                    validationSchema={Yup.object({
+                        denominacion: Yup.string().required("Campo requerido"),
+                        idEmpresa: Yup.number().required("Campo requerido"),
+                        categoriaPadre: Yup.mixed().nullable(),
+                        idSucursales: Yup.array().of(Yup.number()).required("Campo requerido")
+                    })}
+                    initialValues={{
+                        denominacion: elementActive?.denominacion || "",
+                        idEmpresa: Number(idempresa) || 0,
+                        categoriaPadre: elementActive?.categoriaPadre ? {
+                            id: elementActive.categoriaPadre.id,
+                            eliminado: false
+                        } : null,
+                        idSucursales: elementActive?.sucursales?.map(s => s.id) || [Number(idsucursal)]
+                    }}
+                    enableReinitialize={true}
+                    onSubmit={async (values: ICreateCategoria) => {
+                        try {
+                            if (elementActive) {
+                                const dataToUpdate = {
+                                    id: elementActive.id,
+                                    eliminado: false,
+                                    denominacion: values.denominacion,
+                                    idSucursales: values.idSucursales,
+                                    idCategoriaPadre: values.categoriaPadre?.id || null,
+                                    idEmpresa: values.idEmpresa
+                                };
+                                
+                                await apiCategoria.updateCategoria(elementActive.id, dataToUpdate);
+                            } else {
+                                await apiCategoria.createCategoria({
+                                    denominacion: values.denominacion,
+                                    idEmpresa: values.idEmpresa,
+                                    categoriaPadre: values.categoriaPadre,
+                                    idSucursales: values.idSucursales
+                                });
+                            }
+                            
+                            getCategorias();
+                            handleClose();
+                            Swal.fire('¡Éxito!', 'Operación realizada correctamente', 'success');
+                        } catch (error) {
+                            console.error("Error detallado:", error);
+                            Swal.fire('Error', 'Hubo un error al procesar la operación', 'error');
+                        }
+                    }}
+                >
+                    {({ setFieldValue, values, errors, touched }) => (
+                        <Form autoComplete="off">
+                            <div className={styles.formGroup}>
+                                <label className={styles.formLabel}>Denominación:</label>
+                                <input
+                                    name="denominacion"
+                                    type="text"
+                                    placeholder="Denominación"
+                                    className={styles.input}
+                                    onChange={(e) => setFieldValue("denominacion", e.target.value)}
+                                    value={values.denominacion}
+                                />
+                                {errors.denominacion && touched.denominacion && (
+                                    <div className={styles.errorMessage}>{errors.denominacion}</div>
+                                )}
+                            </div>
+                            
+                            <div className={styles.formGroup}>
+                                <label className={styles.formLabel}>
+                                    {elementActive?.categoriaPadre ? 
+                                        `Categoría Padre: ${elementActive.categoriaPadre.denominacion}` : 
+                                        'Categoría Padre'}
+                                </label>
+                                <select
+                                    className={styles.select}
+                                    value={values.categoriaPadre?.id || ''}
+                                    onChange={(e) => {
+                                        const value = e.target.value;
+                                        if (value) {
+                                            const newCategoriaPadre = {
+                                                id: Number(value),
+                                                eliminado: false
+                                            };
+                                            setFieldValue('categoriaPadre', newCategoriaPadre);
+                                        } else {
+                                            setFieldValue('categoriaPadre', null);
+                                        }
+                                    }}
+                                >
+                                    <option value="">Seleccione una categoría padre</option>
+                                    {categoriasPadre.map((categoria: ICategorias) => (
+                                        <option 
+                                            key={categoria.id} 
+                                            value={categoria.id}
                                         >
-                                            <option value="">Seleccione una categoría padre</option>
-                                            {categoriasPadre.map((categoria: ICategorias) => (
-                                                <option 
-                                                    key={categoria.id} 
-                                                    value={categoria.id}
-                                                >
-                                                    {categoria.denominacion}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    </div>
+                                            {categoria.denominacion}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
 
-                                    <div className={styles.formGroup}>
-                                        <label className={styles.formLabel}>Sucursales</label>
-                                        <select 
-                                            multiple
-                                            className={`${styles.select} ${styles.multipleSelect}`}
-                                            value={values.idSucursales.map(String)}
-                                            onChange={(e) => {
-                                                const selectedOptions = Array.from(e.target.selectedOptions)
-                                                    .map(option => Number(option.value));
-                                                setFieldValue('idSucursales', selectedOptions);
-                                            }}
+                            <div className={styles.formGroup}>
+                                <label className={styles.formLabel}>Sucursales</label>
+                                <select 
+                                    multiple
+                                    className={`${styles.select} ${styles.multipleSelect}`}
+                                    value={values.idSucursales.map(String)}
+                                    onChange={(e) => {
+                                        const selectedOptions = Array.from(e.target.selectedOptions)
+                                            .map(option => Number(option.value));
+                                        setFieldValue('idSucursales', selectedOptions);
+                                    }}
+                                >
+                                    {sucursales.map((sucursal) => (
+                                        <option 
+                                            key={sucursal.id} 
+                                            value={sucursal.id}
                                         >
-                                            {sucursales.map((sucursal) => (
-                                                <option 
-                                                    key={sucursal.id} 
-                                                    value={sucursal.id}
-                                                >
-                                                    {sucursal.nombre}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    </div>
+                                            {sucursal.nombre}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
 
-                                    <div className={styles.buttons}>
-                                        <button 
-                                            type="button" 
-                                            className={styles.cancelButton}
-                                            onClick={handleClose}
-                                        >
-                                            Cancelar
-                                        </button>
-                                        <button 
-                                            type="submit" 
-                                            className={styles.submitButton}
-                                        >
-                                            {elementActive ? "Guardar cambios" : "Crear categoría"}
-                                        </button>
-                                    </div>
-                                </Form>
-                            )}
-                        </Formik>
-                    </div>
-                </div>
-            )}
-        </>
+                            <div className={styles.buttons}>
+                                <button 
+                                    type="button" 
+                                    className={styles.cancelButton}
+                                    onClick={handleClose}
+                                >
+                                    Cancelar
+                                </button>
+                                <button 
+                                    type="submit" 
+                                    className={styles.submitButton}
+                                >
+                                    {elementActive ? "Guardar cambios" : "Crear categoría"}
+                                </button>
+                            </div>
+                        </Form>
+                    )}
+                </Formik>
+            </Modal.Body>
+        </Modal>
     );
 };

@@ -20,7 +20,6 @@ export const DashboardCategorias = () => {
                 </div>
                 <div className={styles.main}>
                     <ScreenCategorias 
-                        _idempresa={idempresa} 
                         idsucursal={idsucursal}
                         openModal={openModal}
                         setOpenModal={setOpenModal}
