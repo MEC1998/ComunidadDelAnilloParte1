@@ -4,14 +4,33 @@ import { Form, Formik } from "formik";
 import { AlergenosService } from "../../../../services/dtos/AlergenosService";
 import { useAppDispatch, useAppSelector } from "../../../../hooks/redux";
 import { removeElementActive } from "../../../../redux/slices/TablaReducer";
-import { ICreateAlergeno } from "../../../../types/dtos/alergenos/ICreateAlergeno";
 
 const API_URL = import.meta.env.VITE_API_URL;
-
+import styles from "./ModalAlergenos.module.css";
 interface IModalAlergeno {
     getAlergenos: () => void;
     openModal: boolean;
     setOpenModal: (state: boolean) => void;
+}
+
+interface IImagen {
+    name: string;
+    url: string;
+}
+
+interface ICreateAlergeno {
+    denominacion: string;
+    imagen: IImagen | null;
+}
+
+interface IElementActive {
+    id: number;
+    denominacion: string;
+    imagen: {
+        name: string;
+        url: string;
+    };
+    eliminado: boolean;
 }
 
 export const ModalAlergeno = ({
@@ -21,11 +40,14 @@ export const ModalAlergeno = ({
 }: IModalAlergeno) => {
     const elementActive = useAppSelector(
         (state) => state.tablaReducer.elementActive
-    );
+    ) as IElementActive | null;
 
     const initialValues: ICreateAlergeno = {
         denominacion: elementActive?.denominacion || "",
-        imagen: elementActive?.imagen || null
+        imagen: elementActive?.imagen ? {
+            name: elementActive.imagen.name,
+            url: elementActive.imagen.url
+        } : null
     };
 
     const apiAlergeno = new AlergenosService(API_URL + "/alergenos");
@@ -80,11 +102,12 @@ export const ModalAlergeno = ({
                     >
                         {() => (
                             <Form autoComplete="off">
-                                <div className="container_Form">
+                                <div className={styles.container_Form}>
                                     <input
                                         name="denominacion"
                                         type="text"
                                         placeholder="Denominación"
+                                        className={styles.input}
                                     />
                                     {/* Aquí iría el componente para manejar la imagen */}
                                 </div>

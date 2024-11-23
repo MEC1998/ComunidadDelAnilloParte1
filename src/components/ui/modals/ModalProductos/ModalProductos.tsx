@@ -171,10 +171,10 @@ export const ModalProducto = ({
                   </div>
 
                   <div className={styles.formGroup}>
-                    <label htmlFor="idCategoria">Categoría:</label>
+                    <label htmlFor="idCategoria" className={styles.formLabel}>Categoría:</label>
                     <select
                       name="idCategoria"
-                      className="form-select"
+                      className={styles.formSelect}
                       onChange={(e) => {
                         setFieldValue("idCategoria", Number(e.target.value));
                       }}
