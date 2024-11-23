@@ -5,8 +5,8 @@ import { ICategorias } from "../../types/dtos/categorias/ICategorias";
 
 // Definimos la interfaz para el estado inicial del slice
 interface IInitialState {
-  dataTable: any[];
-  elementActive: null | any;
+  dataTable: (IProductos | ICategorias)[];
+  elementActive: IProductos | ICategorias | null;
 }
 
 // Estado inicial del slice
@@ -16,9 +16,6 @@ const initialState: IInitialState = {
 };
 
 // Interfaz para la acción del payload personalizado
-interface PayloadSetElement {
-  element: IProductos;
-}
 
 // Creamos un slice con Redux Toolkit para manejar la tabla
 const TablaReducer = createSlice({
@@ -26,11 +23,11 @@ const TablaReducer = createSlice({
   initialState,
   reducers: {
     // Reducer para establecer los datos de la tabla
-    setDataTable(state, action: PayloadAction<any[]>) {
+    setDataTable(state, action: PayloadAction<(IProductos | ICategorias)[]>) {
       state.dataTable = action.payload;
     },
     // Reducer para establecer el elemento activo
-    setElementActive(state, action: PayloadAction<PayloadSetElement>) {
+    setElementActive(state, action: PayloadAction<{ element: IProductos | ICategorias }>) {
       state.elementActive = action.payload.element;
     },
     // Reducer para eliminar el elemento activo

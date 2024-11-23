@@ -3,7 +3,6 @@ import { Button, Modal } from "react-bootstrap";
 import * as Yup from "yup";
 
 import { ICreateProducto } from "../../../../types/dtos/productos/ICreateProducto";
-import TextFieldValue from "../../TextFildValue/TextFildValue";
 import { Form, Formik } from "formik";
 import { ProductosService } from "../../../../services/dtos/ProductosService";
 import { useAppDispatch, useAppSelector } from "../../../../hooks/redux";
@@ -53,14 +52,14 @@ export const ModalProducto = ({
   
   // Valores iniciales para el formulario
   const initialValues: ICreateProducto = {
-    denominacion: elementActive?.denominacion || "",
-    precioVenta: elementActive?.precioVenta || 0,
-    descripcion: elementActive?.descripcion || "",
-    habilitado: elementActive?.habilitado || true,
-    codigo: elementActive?.codigo || "",
-    idCategoria: elementActive?.categoria?.id || 0,
-    idAlergenos: elementActive?.alergenos?.map((a: { id: number }) => a.id) || [],
-    imagenes: elementActive?.imagenes || [],
+    denominacion: "",
+    precioVenta: 0,
+    descripcion: "",
+    habilitado: true,
+    codigo: "",
+    idCategoria: 0,
+    idAlergenos: [],
+    imagenes: []
   };
 
   const apiProducto = new ProductosService(API_URL + "/productos");
@@ -85,9 +84,9 @@ export const ModalProducto = ({
         <Modal.Header closeButton>
           {/* Título del modal dependiendo de si se está editando o añadiendo un producto */}
           {elementActive ? (
-            <Modal.Title>Editar un producto:</Modal.Title>
+            <Modal.Title className={styles.modalTitle}>Editar un producto:</Modal.Title>
           ) : (
-            <Modal.Title>Añadir un producto:</Modal.Title>
+            <Modal.Title className={styles.modalTitle}>Añadir un producto:</Modal.Title>
           )}
         </Modal.Header>
         <Modal.Body>
@@ -137,7 +136,7 @@ export const ModalProducto = ({
                 <div className="d-flex flex-column gap-2">
                   <div className={styles.formGroup}>
                     <label htmlFor="denominacion">Denominación:</label>
-                    <TextFieldValue
+                    <input
                       name="denominacion"
                       type="text"
                       placeholder="Denominación"
@@ -146,7 +145,7 @@ export const ModalProducto = ({
 
                   <div className={styles.formGroup}>
                     <label htmlFor="precioVenta">Precio de Venta:</label>
-                    <TextFieldValue
+                    <input
                       name="precioVenta"
                       type="number"
                       placeholder="Precio de Venta"
@@ -155,7 +154,7 @@ export const ModalProducto = ({
 
                   <div className={styles.formGroup}>
                     <label htmlFor="descripcion">Descripción:</label>
-                    <TextFieldValue
+                    <input
                       name="descripcion"
                       type="text"
                       placeholder="Descripción"
@@ -164,7 +163,7 @@ export const ModalProducto = ({
 
                   <div className={styles.formGroup}>
                     <label htmlFor="codigo">Código:</label>
-                    <TextFieldValue
+                    <input
                       name="codigo"
                       type="text"
                       placeholder="Código"

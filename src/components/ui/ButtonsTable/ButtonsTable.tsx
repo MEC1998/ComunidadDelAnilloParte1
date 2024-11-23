@@ -1,21 +1,24 @@
 import { Button } from "@mui/material";
 import { useAppDispatch } from "../../../hooks/redux";
 import { setElementActive } from "../../../redux/slices/TablaReducer";
+import Box from '@mui/material/Box';
+import { IProductos } from "../../../types/dtos/productos/IProductos";
+import { ICategorias } from "../../../types/dtos/categorias/ICategorias";
 
 // Interfaz para los props del componente
-interface ButtonsComponentProps<T> {
+interface ButtonsComponentProps<T extends ICategorias | IProductos> {
   el: T;
   handleDelete: (id: number) => void;
   setOpenModal: (state: boolean) => void;
 }
 
-export const ButtonsTable = <T extends { id: number }>({ el, handleDelete, setOpenModal }: ButtonsComponentProps<T>) => {
+export const ButtonsTable = <T extends ICategorias | IProductos>({ el, handleDelete, setOpenModal }: ButtonsComponentProps<T>) => {
   const dispatch = useAppDispatch();
 
   // Función para manejar la selección del modal para editar
   const handleModalSelected = () => {
-    // Establecer el elemento activo en el estado
-    dispatch(setElementActive({ element: el as any }));
+    // Establecer el elemento activo en el estado usando el tipo genérico T
+    dispatch(setElementActive({ element: el }));
     // Mostrar el modal para editar el elemento
     setOpenModal(true);
   };
@@ -26,11 +29,11 @@ export const ButtonsTable = <T extends { id: number }>({ el, handleDelete, setOp
   };
 
   return (
-    <div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-around",
+    <Box 
+      sx={{ 
+        display: 'flex',
+        gap: '1rem',
+        justifyContent: 'center'
       }}
     >
       {/* Botón para editar el elemento */}
@@ -41,6 +44,6 @@ export const ButtonsTable = <T extends { id: number }>({ el, handleDelete, setOp
       <Button variant="contained" color="error" onClick={handleDeleteItem}>
         <span className="material-symbols-outlined">delete_forever</span>
       </Button>
-    </div>
+    </Box>
   );
 };

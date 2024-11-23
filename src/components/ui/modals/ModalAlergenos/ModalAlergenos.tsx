@@ -4,7 +4,6 @@ import { Form, Formik } from "formik";
 import { AlergenosService } from "../../../../services/dtos/AlergenosService";
 import { useAppDispatch, useAppSelector } from "../../../../hooks/redux";
 import { removeElementActive } from "../../../../redux/slices/TablaReducer";
-import TextFieldValue from "../../TextFildValue/TextFildValue";
 import { ICreateAlergeno } from "../../../../types/dtos/alergenos/ICreateAlergeno";
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -82,7 +81,7 @@ export const ModalAlergeno = ({
                         {() => (
                             <Form autoComplete="off">
                                 <div className="container_Form">
-                                    <TextFieldValue
+                                    <input
                                         name="denominacion"
                                         type="text"
                                         placeholder="Denominación"

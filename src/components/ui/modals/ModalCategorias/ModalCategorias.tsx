@@ -3,7 +3,6 @@ import { Form, Formik } from "formik";
 import { CategoriasService } from "../../../../services/dtos/CategoriasService";
 import { useAppDispatch, useAppSelector } from "../../../../hooks/redux";
 import { removeElementActive } from "../../../../redux/slices/TablaReducer";
-import TextFieldValue from "../../TextFildValue/TextFildValue";
 import { ICreateCategoria } from "../../../../types/dtos/categorias/ICreateCategoria";
 import { useParams } from "react-router-dom";
 import { ICategorias } from "../../../../types/dtos/categorias/ICategorias";
@@ -140,10 +139,12 @@ export const ModalCategoria = ({
                             {({ setFieldValue, values }) => (
                                 <Form autoComplete="off" className={styles.formContent}>
                                     <div className={styles.formGroup}>
-                                        <TextFieldValue
+                                        <label className={styles.formLabel}>Denominación:</label>
+                                        <input
                                             name="denominacion"
                                             type="text"
                                             placeholder="Denominación"
+                                            className={styles.input}
                                         />
                                     </div>
                                     

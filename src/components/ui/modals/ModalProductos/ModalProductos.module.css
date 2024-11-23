@@ -5,6 +5,8 @@
 
 .formGroup {
   margin-bottom: 0.8rem;
+  display: flex;
+  flex-direction: column;
 }
 
 .formGroup label {
@@ -23,3 +25,9 @@
 .submitButton {
   margin-top: 1rem;
 } 
+.modalTitle {
+  font-size: 1.2rem!important;
+  font-weight: 500;
+  width: 100%;
+  text-align: center;
+}
