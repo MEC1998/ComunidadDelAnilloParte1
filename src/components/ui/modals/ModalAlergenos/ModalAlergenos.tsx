@@ -88,10 +88,13 @@ export const ModalAlergeno = ({
                                         ...values,
                                         id: elementActive.id,
                                         eliminado: false,
-                                        imagen:null
+                                        imagen: null
                                     });
                                 } else {
-                                    await apiAlergeno.createAlergeno(values);
+                                    await apiAlergeno.createAlergeno({
+                                        ...values,
+                                        imagen: null
+                                    });
                                 }
                                 getAlergenos();
                                 handleClose();
@@ -100,7 +103,7 @@ export const ModalAlergeno = ({
                             }
                         }}
                     >
-                        {() => (
+                        {({ handleChange, values }) => (
                             <Form autoComplete="off">
                                 <div className={styles.container_Form}>
                                     <input
@@ -108,8 +111,9 @@ export const ModalAlergeno = ({
                                         type="text"
                                         placeholder="Denominación"
                                         className={styles.input}
+                                        onChange={handleChange}
+                                        value={values.denominacion}
                                     />
-                                    {/* Aquí iría el componente para manejar la imagen */}
                                 </div>
                                 <div className="d-flex justify-content-end">
                                     <Button variant="success" type="submit">
